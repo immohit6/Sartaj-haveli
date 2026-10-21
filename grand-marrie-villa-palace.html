@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Grand Marrie Villa Palace | Sartaj Royal Group</title>
+<meta name="description" content="Chandelier hall for receptions and engagements.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="venue" data-venue="2">
+<div id="hdr"></div><main>
+<section class="hero short"><div class="art-wrap" id="vArt" data-dyn></div><div class="wrap hero-in"><div class="eyebrow fx" id="vKind" data-dyn></div><h1 id="vName">Grand Marrie Villa Palace</h1><p class="lead" id="vBlurb" data-dyn></p><p class="note" id="vLoc" data-dyn hidden style="margin:-12px 0 22px"></p><div class="chips" id="vChips" data-dyn style="margin:0 0 26px"></div><div class="row"><a class="btn btn-gold" href="#availability">Check availability</a><button class="btn btn-line" type="button" data-cb>Request a callback</button></div></div></section>
+<section class="sec cream" id="vAboutSec"><div class="wrap two"><div class="rv"><div class="eyebrow">About this venue</div><h2 style="margin:12px 0 18px">Grand Marrie Villa Palace</h2><p class="about" id="vAbout" data-dyn hidden></p></div><div class="facts rv" id="vFacts" data-dyn></div></div></section>
+
+<section class="sec cream" id="vGalSec" hidden><div class="wrap"><div class="head rv"><div class="eyebrow">Gallery</div><h2>A look inside.</h2></div><div class="gal" id="vGal" data-dyn></div></div></section>
+<section class="sec deep" id="layouts"><div class="wrap two"><div class="rv"><div class="eyebrow">Seating layouts</div><h2 style="margin-top:12px">See how your guests fit.</h2>
+ <div class="pills" role="group" aria-label="Layout" id="seatLayout"><button class="pill" aria-pressed="true" data-m="b">Banquet</button><button class="pill" aria-pressed="false" data-m="t">Theatre</button><button class="pill" aria-pressed="false" data-m="c">Cocktail</button></div>
+ <div class="cap" id="seatCap">0</div><div class="note" id="seatNote" data-dyn>Guests in this layout. Sample figures until your real capacities are added.</div></div>
+ <div class="seat-box rv"><svg id="seatSvg" viewBox="0 0 640 380" role="img" aria-label="Floor plan of the hall"></svg></div></div></section>
+<section class="sec" id="availability" style="background:var(--ink)"><div class="wrap two"><div class="rv"><div class="eyebrow">Availability</div><h2 style="margin-top:12px">Find a date that is still open.</h2><p class="note" id="calNote" data-dyn style="margin-top:14px">Sample dates only. We will connect this to your real bookings.</p>
+ <div class="pickbox" aria-live="polite"><span id="calPick" data-dyn>Choose an open date.</span><a class="btn btn-gold" href="contact.html#enquire" id="calUse" hidden>Use this date</a></div></div>
+ <div class="rv"><div class="cal-head"><button class="arrow" id="calPrev" aria-label="Previous month">←</button><h3 id="calTitle" data-dyn></h3><button class="arrow" id="calNext" aria-label="Next month">→</button></div><div class="cal" id="cal" data-dyn></div><div class="legend"><span><i></i>Open</span><span><i style="opacity:.3"></i>Booked</span></div></div></div></section>
+<section class="sec cream"><div class="wrap"><div class="head rv"><div class="eyebrow">Our venues</div><h2>Other venues</h2></div><div class="vgrid three" id="others" data-dyn></div></div></section>
+<section class="sec deep cta-band"><div class="wrap rv"><div class="eyebrow">Check date</div><h2>Planning something special?</h2><p class="sub" style="margin:0 auto 26px">Tell us the date and we will tell you what is open.</p><div class="row"><a class="btn btn-gold" href="contact.html#enquire">Check date</a><button class="btn btn-line" type="button" data-cb>Request a callback</button></div></div></section>
+</main>
+<div id="ftr"></div>
+<div id="ext"></div>
+<script src="supabase-config.js"></script>
+<script src="site.js" charset="utf-8"></script>
+</body></html>

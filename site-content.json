@@ -1,0 +1,260 @@
+{
+  "brand": "Sartaj Royal Group",
+  "tagline": "Weddings, functions and fine dining.",
+  "wa": "",
+  "phone": "",
+  "email": "",
+  "address": "",
+  "hours": "",
+  "maps": "",
+  "formUrl": "",
+  "promo": "Now planning weddings for the 2026 to 2027 season.",
+  "flags": {
+    "prices": false,
+    "cap": false,
+    "cal": false,
+    "menu": false
+  },
+  "media": {
+    "hero": "",
+    "dish": "",
+    "baBefore": "",
+    "baAfter": "",
+    "tour": ""
+  },
+  "gallery": [],
+  "reviews": [],
+  "sale": {
+    "on": false,
+    "name": "",
+    "pct": 10,
+    "start": "",
+    "end": "",
+    "text": ""
+  },
+  "plates": [
+    {
+      "name": "Silver",
+      "price": 800,
+      "items": [
+        "Veg menu, 6 items",
+        "Hall and basic lighting",
+        "Welcome drinks"
+      ]
+    },
+    {
+      "name": "Gold",
+      "price": 1200,
+      "items": [
+        "Veg and non-veg, 10 items",
+        "Stage and themed decor",
+        "Welcome drinks and dessert"
+      ]
+    },
+    {
+      "name": "Royal",
+      "price": 1800,
+      "items": [
+        "Full menu, live counters",
+        "Premium decor and lighting",
+        "Dedicated event manager"
+      ]
+    }
+  ],
+  "addons": [
+    {
+      "name": "Extra decor",
+      "fee": 150000,
+      "per": false
+    },
+    {
+      "name": "DJ and sound",
+      "fee": 40000,
+      "per": false
+    },
+    {
+      "name": "Photo and video",
+      "fee": 90000,
+      "per": false
+    },
+    {
+      "name": "Live chaat counter",
+      "fee": 150,
+      "per": true
+    }
+  ],
+  "menu": [
+    {
+      "n": "Paneer Tikka",
+      "k": "Veg",
+      "p": ""
+    },
+    {
+      "n": "Dal Makhani",
+      "k": "Veg",
+      "p": ""
+    },
+    {
+      "n": "Sarson da Saag",
+      "k": "Veg",
+      "p": ""
+    },
+    {
+      "n": "Butter Chicken",
+      "k": "Non-veg",
+      "p": ""
+    },
+    {
+      "n": "Amritsari Fish",
+      "k": "Non-veg",
+      "p": ""
+    },
+    {
+      "n": "Mutton Rogan Josh",
+      "k": "Non-veg",
+      "p": ""
+    }
+  ],
+  "venues": [
+    {
+      "name": "Sartaj Haveli",
+      "short": "Sartaj Haveli",
+      "kind": "Banquet hall and restaurant",
+      "blurb": "Dine in a heritage haveli, or take over the whole banquet hall for the evening. One kitchen, one team, both sides of your celebration.",
+      "about": "",
+      "city": "",
+      "address": "",
+      "photo": "",
+      "gallery": [],
+      "facts": [
+        {
+          "v": "",
+          "l": "Guests"
+        },
+        {
+          "v": "",
+          "l": "Halls"
+        },
+        {
+          "v": "Daily",
+          "l": "Lunch and dinner"
+        },
+        {
+          "v": "",
+          "l": "Parking"
+        }
+      ],
+      "cap": {
+        "b": 300,
+        "t": 400,
+        "c": 450
+      },
+      "booked": []
+    },
+    {
+      "name": "Kings Villa Palace",
+      "short": "Kings Villa",
+      "kind": "Weddings and functions",
+      "blurb": "Open lawns, a grand stage and room for the biggest guest lists. Built for the wedding you have been picturing for years.",
+      "about": "",
+      "city": "",
+      "address": "",
+      "photo": "",
+      "gallery": [],
+      "facts": [
+        {
+          "v": "",
+          "l": "Guests"
+        },
+        {
+          "v": "",
+          "l": "Cars parked"
+        },
+        {
+          "v": "",
+          "l": "Suites"
+        },
+        {
+          "v": "",
+          "l": "Halls"
+        }
+      ],
+      "cap": {
+        "b": 1000,
+        "t": 1400,
+        "c": 1500
+      },
+      "booked": []
+    },
+    {
+      "name": "Grand Marrie Villa Palace",
+      "short": "Grand Marrie",
+      "kind": "Weddings and functions",
+      "blurb": "A chandelier hall for receptions and engagements that feel intimate and still look grand.",
+      "about": "",
+      "city": "",
+      "address": "",
+      "photo": "",
+      "gallery": [],
+      "facts": [
+        {
+          "v": "",
+          "l": "Guests"
+        },
+        {
+          "v": "",
+          "l": "Halls"
+        },
+        {
+          "v": "",
+          "l": "Suites"
+        },
+        {
+          "v": "",
+          "l": "Parking"
+        }
+      ],
+      "cap": {
+        "b": 600,
+        "t": 800,
+        "c": 900
+      },
+      "booked": []
+    },
+    {
+      "name": "Victoria Palace",
+      "short": "Victoria Palace",
+      "kind": "Weddings and functions",
+      "blurb": "A palace setting for weddings and family functions, styled the way you want it, down to the last detail.",
+      "about": "",
+      "city": "",
+      "address": "",
+      "photo": "",
+      "gallery": [],
+      "facts": [
+        {
+          "v": "",
+          "l": "Guests"
+        },
+        {
+          "v": "",
+          "l": "Halls"
+        },
+        {
+          "v": "",
+          "l": "Cars parked"
+        },
+        {
+          "v": "",
+          "l": "Suites"
+        }
+      ],
+      "cap": {
+        "b": 500,
+        "t": 700,
+        "c": 800
+      },
+      "booked": []
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Packages and prices | Sartaj Royal Group</title>
+<meta name="description" content="Wedding and function packages with a live price estimate.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="packages">
+<div id="hdr"></div><section class="hero short"><div class="art-wrap"><div class="art" style="background:linear-gradient(180deg,#0B2F27 0%,#124A3D 60%,#1C6354 100%)"><div class="glow" style="width:46%;height:60%;left:27%;top:-10%;background:#E3C374"></div><div class="arches"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div></div></div><div class="wrap hero-in"><div class="eyebrow fx">Packages</div><h1>Packages and prices</h1></div></section><main>
+<section class="sec cream"><div class="wrap"><div class="rv"><div class="eyebrow">Package builder</div><h2 style="margin-top:12px">Build your event. See the cost as you go.</h2><p class="sub" id="pkSub" data-dyn>Pick a package, add what you need and drag the guest count.</p><div id="saleBar" data-dyn style="margin-top:14px"></div></div>
+<div class="pk-grid" id="pkGrid" data-dyn></div><div class="addons" id="addons" role="group" aria-label="Add-ons" data-dyn></div>
+<div class="gl"><label for="pkGuests" class="note">Guests</label><output id="pkOut" for="pkGuests">400</output></div><input type="range" id="pkGuests" min="20" max="1500" step="10" value="400">
+<div class="total"><div><div class="note">Estimated total</div><div class="big" id="pkTotal">₹0</div><div class="note" id="pkLine" data-dyn></div></div><a class="btn btn-dark" href="contact.html#enquire" id="pkSend">Send this estimate</a></div></div></section>
+<section class="sec deep cta-band"><div class="wrap rv"><div class="eyebrow">Check date</div><h2>Planning something special?</h2><p class="sub" style="margin:0 auto 26px">Tell us the date and we will tell you what is open.</p><div class="row"><a class="btn btn-gold" href="contact.html#enquire">Check date</a><button class="btn btn-line" type="button" data-cb>Request a callback</button></div></div></section></main>
+<div id="ftr"></div>
+<div id="ext"></div>
+<script src="supabase-config.js"></script>
+<script src="site.js" charset="utf-8"></script>
+</body></html>

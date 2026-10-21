@@ -1,0 +1,4 @@
+# Plain static site: nothing to build. The files in this folder are the website.
+[build]
+  command = "echo 'static site, no build needed'"
+  publish = "."
