@@ -301,3 +301,19 @@ footer{border-top:1px solid var(--line);padding-block:60px 120px;color:var(--mut
 .lang-pick button{min-height:60px;border-radius:16px;border:1.5px solid var(--paper-line);background:#fff;color:var(--paper-ink);font-size:24px;font-weight:600;cursor:pointer}
 .lang-pick button:hover,.lang-pick button:focus-visible{border-color:var(--gold);background:#FBF6E8}
 .lnote{margin:16px 0 0;font-size:13px;color:var(--paper-mute)}
+
+/* brand: crown mark and gold shimmer */
+.brand{display:inline-flex;align-items:center;gap:10px}
+.bmark{width:1.05em;height:1.05em;flex:none;color:#E3C374;filter:drop-shadow(0 0 8px rgba(227,195,116,.45));transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.bmark path{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.bmark circle{fill:currentColor}
+.brand:hover .bmark{transform:rotate(-6deg) scale(1.1)}
+.btxt{background:linear-gradient(100deg,#B8892F 0%,#F3DC8E 28%,#C9A24B 50%,#FBEDB8 72%,#B8892F 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:bshine 7s linear infinite}
+@keyframes bshine{to{background-position:-240% 0}}
+@media(max-width:420px){.brand{max-width:160px}}
+@media(max-width:380px){.bmark{display:none}.brand{max-width:132px}}
+/* buttons and cards: soft shine and glow */
+.btn-gold{position:relative;overflow:hidden}
+.btn-gold::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+.btn-gold:hover::after{left:130%}
+.vcard:hover{box-shadow:0 24px 60px rgba(201,162,75,.22)}

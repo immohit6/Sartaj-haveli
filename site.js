@@ -219,7 +219,7 @@
     var sOn=saleOn(), ptxt=sOn?(CFG.sale.text||((CFG.sale.name||'Sale')+': '+CFG.sale.pct+'% off our packages'+(CFG.sale.end?' until '+fmtD(CFG.sale.end):'')+'.')):CFG.promo;
     var h='';
     if(ptxt)h+='<div class="promo"><span data-dyn>'+esc(sOn?ptxt:tr(ptxt))+'</span> <a href="contact.html#enquire">Check date</a></div>';
-    h+='<header class="nav"><div class="wrap nav-in"><a class="brand" href="index.html" data-dyn>'+esc(CFG.brand)+'</a>'
+    h+='<header class="nav"><div class="wrap nav-in"><a class="brand" href="index.html" data-dyn>'+brandHtml()+'</a>'
       +'<nav class="links" aria-label="Main"><div class="dd"><button type="button" aria-haspopup="true">Venues ▾</button><div class="dd-menu" data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(v.name)+'</a>'}).join('')+'</div></div>'
       +'<a href="packages.html"'+on('packages.html')+'>Packages</a><a href="gallery.html"'+on('gallery.html')+'>Gallery</a><a href="contact.html"'+on('contact.html')+'>Contact</a></nav>'
       +'<div class="nav-r"><div class="lang" role="group" aria-label="Language"><button type="button" data-l="en" aria-pressed="'+(LANG==='en')+'">EN</button><button type="button" data-l="pa" aria-pressed="'+(LANG==='pa')+'">ਪੰਜਾਬੀ</button><button type="button" data-l="hi" aria-pressed="'+(LANG==='hi')+'">हिन्दी</button></div>'
@@ -234,11 +234,14 @@
     if(CFG.email)line(esc(CFG.email));
     if(CFG.hours)line(esc(CFG.hours));
     if(/^https?:\/\//.test(CFG.maps||''))line('<a href="'+esc(CFG.maps)+'" target="_blank" rel="noopener">Get directions</a>');
-    $('#ftr').innerHTML='<footer><div class="wrap"><div class="foot"><div><div class="brand" data-dyn style="margin-bottom:8px">'+esc(CFG.brand)+'</div><div data-dyn>'+esc(tr(CFG.tagline))+'</div><div class="cl" data-dyn style="margin-top:12px">'+lines+'</div></div>'
+    $('#ftr').innerHTML='<footer><div class="wrap"><div class="foot"><div><div class="brand" data-dyn style="margin-bottom:8px">'+brandHtml()+'</div><div data-dyn>'+esc(tr(CFG.tagline))+'</div><div class="cl" data-dyn style="margin-top:12px">'+lines+'</div></div>'
       +'<div><b>Venues</b><span data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(v.name)+'</a>'}).join('')+'</span></div>'
       +'<div><b>Explore</b><a href="packages.html">Packages</a><a href="gallery.html">Gallery</a><a href="contact.html">Contact</a><a href="#" data-cb>Request a callback</a></div></div>'
       +'<div class="copy" data-dyn>© '+new Date().getFullYear()+' '+esc(CFG.brand)+'</div></div></footer>';
     ['cbVenue'].forEach(function(id){var s=$('#'+id); if(!s)return; var k=s.selectedIndex; s.innerHTML='<option>Any venue</option>'+V.map(function(v){return '<option>'+esc(v.name)+'</option>'}).join(''); s.selectedIndex=Math.max(0,k)});
+  }
+  function brandHtml(){
+    return '<svg class="bmark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M5 24 3.5 11l7 6 5.5-9 5.5 9 7-6L27 24z"/><path d="M6.5 28h19"/><circle cx="3.5" cy="9.5" r="1.6"/><circle cx="16" cy="6" r="1.6"/><circle cx="28.5" cy="9.5" r="1.6"/></svg><span class="btxt">'+esc(CFG.brand)+'</span>';
   }
   function injectExtras(){
     var e=$('#ext'); if(!e)return;
