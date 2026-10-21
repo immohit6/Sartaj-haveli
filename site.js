@@ -249,8 +249,24 @@
     +'<div class="f"><label for="cbTime">Best time to call</label><select id="cbTime"><option>Any time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>'
     +'<div class="f"><label for="cbVenue">Venue</label><select id="cbVenue"><option>Any venue</option></select></div>'
     +'<p class="msg" id="cbMsg" hidden aria-live="polite"></p>'
-    +'<div class="row"><button class="btn btn-dark" type="submit" id="cbGo">Call me back</button><button class="btn btn-line" type="button" id="cbClose">Close</button></div></form></div></div>';
+    +'<div class="row"><button class="btn btn-dark" type="submit" id="cbGo">Call me back</button><button class="btn btn-line" type="button" id="cbClose">Close</button></div></form></div></div>'
+    +'<div class="modal lmodal" id="langModal" role="dialog" aria-modal="true" aria-labelledby="langTitle" hidden><div class="mbox lbox" data-dyn>'
+    +'<div class="lbrand">'+esc(CFG.brand)+'</div>'
+    +'<h3 id="langTitle">Choose your language</h3>'
+    +'<p class="lsub"><span lang="pa">ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ</span> &nbsp;·&nbsp; <span lang="hi">अपनी भाषा चुनें</span></p>'
+    +'<div class="lang-pick"><button type="button" data-l="en" lang="en">English</button><button type="button" data-l="pa" lang="pa">ਪੰਜਾਬੀ</button><button type="button" data-l="hi" lang="hi">हिन्दी</button></div>'
+    +'<p class="lnote">You can change this any time from the menu at the top.</p></div></div>';
+    maybeAskLang();
   }
+  /* first visit: ask which language to show the site in */
+  function hasSavedLang(){try{return /^(en|pa|hi)$/.test(localStorage.getItem('srg_lang')||'')}catch(x){return true}}
+  function storageWorks(){try{localStorage.setItem('srg_t','1');localStorage.removeItem('srg_t');return true}catch(x){return false}}
+  function maybeAskLang(){
+    if(/[?&]preview=1/.test(location.search)||hasSavedLang()||!storageWorks())return;
+    var m=$('#langModal'); if(!m)return; m.hidden=false; document.body.classList.add('lock');
+    var f=m.querySelector('button'); if(f)f.focus();
+  }
+  function hideLang(){var m=$('#langModal'); if(m&&!m.hidden){m.hidden=true; document.body.classList.remove('lock')}}
 
   /* ---------- callback request ---------- */
   var cbLast=null;
@@ -470,7 +486,7 @@
   /* ---------- events (delegated, so re-rendering is safe) ---------- */
   document.addEventListener('click',function(e){
     var t=e.target, b;
-    if((b=t.closest('[data-l]'))){setLang(b.getAttribute('data-l'));return}
+    if((b=t.closest('[data-l]'))){setLang(b.getAttribute('data-l'));hideLang();return}
     if(t.closest('[data-cb]')){e.preventDefault();var mm=$('#mmenu');if(mm)mm.classList.remove('open');openCb();return}
     if(t.closest('#burger')){var m=$('#mmenu'),o=m.classList.toggle('open');$('#burger').setAttribute('aria-expanded',o);return}
     if(t.closest('#cbClose')||t.id==='cbModal'){closeCb();return}
@@ -495,7 +511,7 @@
     else if(e.target.id==='baRange')$('#ba').style.setProperty('--p',e.target.value+'%');
   });
   document.addEventListener('change',function(e){if(e.target.closest&&e.target.closest('#enqForm'))renderMsg()});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#cbModal')&&!$('#cbModal').hidden)closeCb()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#langModal')&&!$('#langModal').hidden){setLang('en');hideLang();return} if(e.key==='Escape'&&$('#cbModal')&&!$('#cbModal').hidden)closeCb()});
 
   /* ---------- boot ---------- */
   injectExtras(); renderAll(); startRot();
