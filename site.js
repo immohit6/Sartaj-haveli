@@ -145,7 +145,7 @@
     'Close':['ਬੰਦ ਕਰੋ','बंद करें'],
     'Request a callback':['ਕਾਲ ਬੈਕ ਲਈ ਬੇਨਤੀ ਕਰੋ','कॉल बैक का अनुरोध करें'],
     'Leave your number and we will call you at a time that suits you.':['ਆਪਣਾ ਨੰਬਰ ਛੱਡੋ, ਅਸੀਂ ਤੁਹਾਡੇ ਸਮੇਂ ਮੁਤਾਬਕ ਕਾਲ ਕਰਾਂਗੇ।','अपना नंबर छोड़ें, हम आपके समय के हिसाब से कॉल करेंगे।'],
-    'Best time to call':['ਕਾਲ ਕਰਨ ਦਾ ਵਧੀਆ ਸਮਾਂ','कॉल करने का सही समय'],'Any time':['ਕਿਸੇ ਵੀ ਵੇਲੇ','किसी भी समय'],'Morning':['ਸਵੇਰ','सुबह'],'Afternoon':['ਦੁਪਹਿਰ','दोपहर'],'Evening':['ਸ਼ਾਮ','शाम'],
+    'Email (optional)':['ਈਮੇਲ (ਜ਼ਰੂਰੀ ਨਹੀਂ)','ईमेल (वैकल्पिक)'],'Best time to call':['ਕਾਲ ਕਰਨ ਦਾ ਵਧੀਆ ਸਮਾਂ','कॉल करने का सही समय'],'Any time':['ਕਿਸੇ ਵੀ ਵੇਲੇ','किसी भी समय'],'Morning':['ਸਵੇਰ','सुबह'],'Afternoon':['ਦੁਪਹਿਰ','दोपहर'],'Evening':['ਸ਼ਾਮ','शाम'],
     'Call me back':['ਮੈਨੂੰ ਕਾਲ ਕਰੋ','मुझे कॉल करें'],'Open WhatsApp':['WhatsApp ਖੋਲ੍ਹੋ','WhatsApp खोलें'],
     'Gallery':['ਗੈਲਰੀ','गैलरी'],'A look inside.':['ਅੰਦਰ ਇੱਕ ਝਲਕ।','अंदर एक झलक।'],
     'What our guests say':['ਸਾਡੇ ਮਹਿਮਾਨ ਕੀ ਕਹਿੰਦੇ ਹਨ','हमारे मेहमान क्या कहते हैं'],
@@ -278,6 +278,7 @@
     +'<div class="modal" id="cbModal" role="dialog" aria-modal="true" aria-labelledby="cbTitle" hidden><div class="mbox"><h3 id="cbTitle">Request a callback</h3><p>Leave your number and we will call you at a time that suits you.</p>'
     +'<form id="cbForm" novalidate><div class="f"><label for="cbName">Your name</label><input id="cbName" type="text" autocomplete="name" placeholder="Name" maxlength="80"></div>'
     +'<div class="f"><label for="cbPhone">Phone</label><input id="cbPhone" type="tel" autocomplete="tel" placeholder="Phone" maxlength="30"></div>'
+    +'<div class="f"><label for="cbEmail">Email (optional)</label><input id="cbEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120"></div>'
     +'<div class="f"><label for="cbTime">Best time to call</label><select id="cbTime"><option>Any time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>'
     +'<div class="f"><label for="cbVenue">Venue</label><select id="cbVenue"><option>Any venue</option></select></div>'
     +'<p class="msg" id="cbMsg" hidden aria-live="polite"></p>'
@@ -311,14 +312,14 @@
   }
   function closeCb(){$('#cbModal').hidden=true; document.body.classList.remove('lock'); if(cbLast&&cbLast.focus)cbLast.focus()}
   var T3={
-    en:{ok:'Thank you. We have your number and will call you back soon.',bad:'Please enter your name and a phone number we can call.',fail:'We could not save this online right now. Please use WhatsApp or the enquiry form so it reaches us.'},
+    en:{ok:'Thank you. We have your number and will call you back shortly.',bad:'Please enter your name and a phone number we can call.',fail:'We could not save this online right now. Please use WhatsApp or the enquiry form so it reaches us.'},
     pa:{ok:'ਧੰਨਵਾਦ। ਸਾਡੇ ਕੋਲ ਤੁਹਾਡਾ ਨੰਬਰ ਹੈ, ਅਸੀਂ ਜਲਦੀ ਹੀ ਕਾਲ ਕਰਾਂਗੇ।',bad:'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਨਾਮ ਅਤੇ ਫ਼ੋਨ ਨੰਬਰ ਲਿਖੋ।',fail:'ਇਸ ਵੇਲੇ ਇਹ ਆਨਲਾਈਨ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ WhatsApp ਜਾਂ ਪੁੱਛਗਿੱਛ ਫ਼ਾਰਮ ਵਰਤੋ।'},
     hi:{ok:'धन्यवाद। हमारे पास आपका नंबर है, हम जल्दी ही कॉल करेंगे।',bad:'कृपया अपना नाम और फ़ोन नंबर लिखें।',fail:'अभी यह ऑनलाइन सहेजा नहीं जा सका। कृपया WhatsApp या पूछताछ फ़ॉर्म इस्तेमाल करें।'}
   };
   async function storeCb(rec){
     if(SBOK){
       var r=await fetch(SB.url+'/rest/v1/callbacks',{method:'POST',headers:sbH({'Content-Type':'application/json',Prefer:'return=minimal'}),
-        body:JSON.stringify({name:rec.name,phone:rec.phone,time:rec.time||'',venue:rec.venue||'',lang:rec.lang||'en'})});
+        body:JSON.stringify({name:rec.name,phone:rec.phone,time:rec.time||'',venue:rec.venue||'',lang:rec.lang||'en',email:rec.email||null})});
       if(r.ok)return;
     }
     throw new Error('nostore');
@@ -328,7 +329,8 @@
     var nm=$('#cbName').value.trim().slice(0,80), ph=$('#cbPhone').value.trim().slice(0,30), t=T3[LANG];
     if(!nm||digits(ph).length<7){cbSay(t.bad,true);return}
     var go=$('#cbGo'); go.disabled=true;
-    var rec={name:nm,phone:ph,time:$('#cbTime').value,venue:$('#cbVenue').value,at:Date.now(),done:false,lang:LANG};
+    var em=($('#cbEmail').value||'').trim().slice(0,120); if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))em='';
+    var rec={name:nm,phone:ph,email:em,time:$('#cbTime').value,venue:$('#cbVenue').value,at:Date.now(),done:false,lang:LANG};
     try{await storeCb(rec); cbSay(t.ok); go.hidden=true; $('#cbForm').reset()}
     catch(err){
       var wa=digits(CFG.wa), x=wa?' https://wa.me/'+wa+'?text='+encodeURIComponent('Hello '+CFG.brand+', please call me back. I am '+nm+', phone '+ph+'.'):'';
