@@ -115,8 +115,11 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
     wa:'', phone:'', email:'', address:'', hours:'', maps:'',
     promo:'Now planning weddings for the 2026 to 2027 season.',
     flags:{prices:false,cap:false,cal:false,menu:false},
-    media:{hero:'',dish:'',baBefore:'',baAfter:'',tour:''},
+    media:{hero:'',heroVideo:'',dish:'',baBefore:'',baAfter:'',tour:''},
     gallery:[], reviews:[],
+    stats:{events:'',since:'',rating:''}, ig:{handle:'',link:''},
+    story:{title:'Four venues. One family.',text:'',name:'',role:'',photo:''},
+    faq:[{q:'Can we bring our own decorator?',a:''},{q:'What time does the music have to stop?',a:''},{q:'Is alcohol allowed?',a:''},{q:'How much advance do we pay, and can we cancel?',a:''},{q:'Are rooms available for family?',a:''},{q:'Do you cater Jain or other special diets?',a:''}],
     sale:{on:false,name:'',pct:10,start:'',end:'',text:''},
     plates:[
       {name:'Silver',price:800,items:['Veg menu, 6 items','Hall and basic lighting','Welcome drinks']},
@@ -132,6 +135,7 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
       {name:'Victoria Palace',short:'Victoria Palace',kind:'Weddings and functions',blurb:'A palace setting for weddings and family functions, styled the way you want it, down to the last detail.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Halls'],['','Cars parked'],['','Suites']),cap:{b:500,t:700,c:800},booked:[]}
     ]
   };
+  DEF.venues.forEach(function(v){v.pa='';v.hi='';v.best='';v.price='';v.parking='';v.rooms='';v.ac='';v.landmark='';v.tour=''});
   function merge(a,b){
     if(Array.isArray(b))return clone(b);
     if(b&&typeof b==='object'&&a&&typeof a==='object'&&!Array.isArray(a)){
@@ -145,7 +149,7 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
     var c=merge(DEF,j);
     c.venues=DEF.venues.map(function(d,i){var v=merge(d,(j.venues&&j.venues[i])||{}); while(v.facts.length<4)v.facts.push({v:'',l:''}); v.facts=v.facts.slice(0,4); return v});
     c.plates=DEF.plates.map(function(d,i){return merge(d,(j.plates&&j.plates[i])||{})});
-    ['addons','menu','reviews','gallery'].forEach(function(k){if(!Array.isArray(j[k]))c[k]=clone(DEF[k])});
+    ['addons','menu','reviews','gallery','faq'].forEach(function(k){if(!Array.isArray(j[k]))c[k]=clone(DEF[k])});
     return c;
   }
 
@@ -157,7 +161,7 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
   var armed=false, W=null, tab='contact', vi=0, dirty=false, CB=[], unsub=null;
   var today=new Date(), avY=today.getFullYear(), avM=today.getMonth();
   var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var TABS=[['contact','Contact'],['venues','Venues'],['avail','Availability'],['pricing','Prices'],['sale','Sales'],['menu','Menu'],['photos','Photos'],['reviews','Reviews'],['inbox','Callbacks']];
+  var TABS=[['contact','Contact'],['venues','Venues'],['avail','Availability'],['pricing','Prices'],['sale','Sales'],['menu','Menu'],['photos','Photos'],['extras','Extras'],['reviews','Reviews'],['inbox','Callbacks']];
 
   function say(t,bad){status.textContent=t||'';status.style.color=bad?'#F2A3A3':''}
   function g(p){return p.split('.').reduce(function(o,k){return o==null?o:o[k]},W)}
@@ -178,6 +182,7 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
     'media.dish':{t:'Restaurant photo',where:'Next to the menu on the Sartaj Haveli page.',locs:[{l:'Sartaj Haveli, menu',page:'sartaj-haveli.html',sel:'#dishArt'}]},
     'media.baBefore':{t:'Before photo',where:'The left side of the before and after slider on the Gallery page.',locs:[{l:'Gallery, slider',page:'gallery.html',sel:'#ba',force:'This slider appears once you add both before and after photos'}]},
     'media.baAfter':{t:'After photo',where:'The right side of the before and after slider on the Gallery page.',locs:[{l:'Gallery, slider',page:'gallery.html',sel:'#ba',force:'This slider appears once you add both before and after photos'}]},
+    'story.photo':{t:'Our story photo',where:'Beside your story on the Our story page.',locs:[{l:'Our story page',page:'story.html',sel:'#stPhoto',force:'This page shows once you write your story'}]},
     'gallery':{t:'Home page gallery',where:'The "A look inside" strip on the home page, and the Gallery page.',locs:[{l:'Home page, gallery',page:'index.html',sel:'#galTease',force:'This gallery appears once you add a photo'},{l:'Gallery page',page:'gallery.html',sel:'#galGrid'}]}
   };
   function slotMeta(p){
@@ -201,6 +206,10 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
       +'<div class="pf"><label class="a-btn" style="display:inline-flex;align-items:center;cursor:pointer">Add photos<input type="file" accept="image/*" multiple data-upm="'+p+'" hidden></label><button type="button" class="a-btn" data-act="where" data-p="'+p+'">Show me where</button></div></div>';
   }
 
+  function video(label,p,hint){
+    var u=g(p), has=/\.(mp4|webm)$/i.test(u||'');
+    return '<div class="a-card slot"><b>'+esc(label)+'</b>'+(has?'<p class="slot-w"><span>Video uploaded.</span> It is playing from your photo storage.</p>':'')+'<div class="pf"><label class="a-btn" style="display:inline-flex;align-items:center;cursor:pointer">'+(has?'Replace video':'Choose video')+'<input type="file" accept="video/mp4,video/webm" data-upv="'+p+'" hidden></label>'+(has?'<button type="button" class="a-btn dng" data-act="clr" data-p="'+p+'">Remove</button>':'')+'</div>'+(hint?'<small style="color:var(--mute)">'+esc(hint)+'</small>':'')+'</div>';
+  }
   /* ---------- tabs ---------- */
   var V={
     contact:function(){return '<h3>Contact and brand</h3><p class="a-note">These show in the footer, the WhatsApp button and the callback form.</p>'
@@ -220,6 +229,13 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
       +v.facts.map(function(f,i){return '<div class="arow">'+fld('Value',b+'facts.'+i+'.v',{ph:'600'})+fld('Label',b+'facts.'+i+'.l',{ph:'Guests'})+'</div>'}).join('')
       +'<h4>Capacity by layout</h4><div class="arow">'+fld('Banquet (tables)',b+'cap.b',{type:'num'})+fld('Theatre (rows)',b+'cap.t',{type:'num'})+'</div><div class="arow">'+fld('Cocktail (standing)',b+'cap.c',{type:'num'})+'<div></div></div>'
       +fld('These are my real capacities','flags.cap',{type:'check',hint:'Tick when correct. Removes the "sample figures" note.'})
+      +'<h4>Names in Punjabi and Hindi (optional)</h4><div class="arow">'+fld('Punjabi name',b+'pa',{ph:'ਸਰਤਾਜ ਹਵੇਲੀ'})+fld('Hindi name',b+'hi',{ph:'सरताज हवेली'})+'</div>'
+      +'<h4>Compare table and map</h4><p class="a-note">These feed the "Which palace fits your day?" table on the home page and the map on this venue page. Leave a box empty to hide that row. The map uses the street address above.</p>'
+      +'<div class="arow">'+fld('Best for',b+'best',{ph:'Large weddings'})+fld('Starting price',b+'price',{ph:'₹1,200 per plate'})+'</div>'
+      +'<div class="arow">'+fld('Parking',b+'parking',{ph:'80 cars'})+fld('Guest rooms',b+'rooms',{ph:'Yes, 12 rooms'})+'</div>'
+      +'<div class="arow">'+fld('Air conditioning',b+'ac',{ph:'Fully air conditioned'})+fld('Near (landmark)',b+'landmark',{ph:'5 minutes from the bus stand'})+'</div>'
+      +fld('Walk-through video link',b+'tour',{ph:'https://www.youtube.com/watch?v=...',hint:'Paste a YouTube link, or upload a short MP4 below. Shows a "Step inside" video on this page.'})
+      +video('Or upload a short video',b+'tour','Keep it under 40 MB and about a minute long so it loads fast on phones.')
       +'<h4>Photos</h4>'+photo('Main photo',b+'photo','Wide photos work best. Large phone photos are resized for you.')+gallery('Gallery',b+'gallery')},
     avail:function(){
       var v=g('venues.'+vi), set={}; (v.booked||[]).forEach(function(d){set[d]=1});
@@ -250,6 +266,19 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
       return '<h3>Site photos</h3><p class="a-note">Each photo below says where it shows. Tap <b>Show me where</b> to see your real site with a gold outline on the exact spot. Removing a photo brings the drawn placeholder back.</p>'
       +photo('Home page big photo','media.hero','A wide photo of your best venue works best.')+photo('Restaurant photo','media.dish')+photo('Before photo: empty hall','media.baBefore')+photo('After photo: wedding setup','media.baAfter','Use the same angle as the before photo.')
       +gallery('Home page gallery','gallery')},
+    extras:function(){
+      return '<h3>Extras</h3><p class="a-note">Each block shows on the site only once you fill it in. Nothing fake is ever shown.</p>'
+      +'<h4>Home page video</h4>'+fld('Video link','media.heroVideo',{ph:'https://.../hall.mp4',hint:'A short looping clip behind the home page headline (an MP4 link). With no video, the home page rotates your best photos instead. Phones that save data or have reduced motion switched on see a still photo.'})
+      +video('Or upload a video','media.heroVideo','Keep it under 10 MB and 10 to 15 seconds for a fast home page. No sound is played.')
+      +'<h4>Numbers strip on the home page</h4><p class="a-note">Only real numbers, please. Empty boxes are left out.</p>'
+      +'<div class="arow">'+fld('Events hosted','stats.events',{ph:'500+'})+fld('Hosting families since','stats.since',{ph:'2012'})+'</div>'+fld('Guest rating','stats.rating',{ph:'4.8',hint:'For example your Google rating. Shows a star next to it.'})
+      +'<h4>Instagram</h4><div class="arow">'+fld('Instagram handle','ig.handle',{ph:'@sartajroyalgroup'})+fld('Profile link (optional)','ig.link',{ph:'https://instagram.com/...'})+'</div><p class="a-note">Adds a "Follow along" block with your photos linking to your profile.</p>'
+      +'<h4>Our story</h4><p class="a-note">Writing this adds an "Our story" page and a link to it in the menu.</p>'
+      +fld('Heading','story.title')+fld('Your story','story.text',{type:'area',hint:'Leave a blank line between paragraphs.'})
+      +'<div class="arow">'+fld('Your name','story.name')+fld('Role','story.role',{ph:'Owner, Sartaj Royal Group'})+'</div>'+photo('Story photo','story.photo','A portrait of you and the family works well.')
+      +'<h4>Questions and answers</h4><p class="a-note">Shows on the Contact and Packages pages. A question only appears once it has an answer.</p>'
+      +W.faq.map(function(f,i){var b='faq.'+i+'.'; return '<div class="a-card">'+fld('Question',b+'q')+fld('Answer',b+'a',{type:'area'})+'<button type="button" class="a-btn dng" data-act="rm" data-p="faq" data-i="'+i+'">Remove</button></div>'}).join('')
+      +'<button type="button" class="a-btn" data-act="add" data-p="faq">Add a question</button>'},
     reviews:function(){
       return '<h3>Guest reviews</h3><p class="a-note">Only add reviews from real guests, with their permission. Nothing shows until you add one.</p>'
       +W.reviews.map(function(r,i){var b='reviews.'+i+'.'; return '<div class="a-card">'+fld('What they said',b+'text',{type:'area'})+'<div class="arow">'+fld('Name',b+'name')+fld('Event (optional)',b+'detail',{ph:'Wedding at Kings Villa'})+'</div><button type="button" class="a-btn dng" data-act="rm" data-p="reviews" data-i="'+i+'">Remove</button></div>'}).join('')
@@ -279,6 +308,13 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
     if(!r.ok)throw new Error('Upload failed. Check that setup step 3 (photo storage) was run.');
     return SB.url+'/storage/v1/object/public/photos/'+name;
   }
+  async function uploadVideo(file){
+    if(file.size>45*1024*1024)throw new Error('That video is over 45 MB. Please use a shorter or smaller clip.');
+    var ext=/webm/i.test(file.type||file.name)?'webm':'mp4', name='site/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    var r=await api('/storage/v1/object/photos/'+name,{method:'POST',headers:{'Content-Type':file.type||'video/mp4'},body:file});
+    if(!r.ok)throw new Error('Video upload failed. Try a smaller clip.');
+    return SB.url+'/storage/v1/object/public/photos/'+name;
+  }
   function shrink(file,max){return new Promise(function(res){
     var img=new Image(), u=URL.createObjectURL(file);
     img.onload=function(){var k=Math.min(1,max/Math.max(img.width,img.height)), c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height); c.toBlob(function(b){URL.revokeObjectURL(u);res(b||file)},'image/jpeg',.85)};
@@ -286,10 +322,11 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
   })}
   async function onFile(e){
     var t=e.target; if(t.type!=='file'||!t.files.length)return;
-    var p=t.getAttribute('data-up'), pm=t.getAttribute('data-upm'), files=Array.prototype.slice.call(t.files);
+    var p=t.getAttribute('data-up'), pm=t.getAttribute('data-upm'), pv=t.getAttribute('data-upv'), files=Array.prototype.slice.call(t.files);
     say('Uploading…');
     try{
-      if(p){s(p,await upload(files[0]))}
+      if(pv){s(pv,await uploadVideo(files[0]))}
+      else if(p){s(p,await upload(files[0]))}
       else if(pm){var arr=(g(pm)||[]).slice(); for(var i=0;i<files.length;i++){arr.push(await upload(files[i]))} s(pm,arr)}
       mark(); render(); if(PV.p){drawTools(); sendPrev()}
     }catch(err){say((err&&err.message)||'Upload failed. Try a smaller photo.',true)}
@@ -324,7 +361,7 @@ a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
     if(a==='clr'){s(p,'');mark();render();return}
     if(a==='rmg'){var arr=g(p).slice();arr.splice(i,1);s(p,arr);mark();render();return}
     if(a==='rm'){var l=g(p).slice();l.splice(i,1);s(p,l);mark();render();return}
-    if(a==='add'){var l2=g(p).slice(); l2.push(p==='addons'?{name:'',fee:0,per:false}:p==='menu'?{n:'',k:'Veg',p:''}:{text:'',name:'',detail:''}); s(p,l2);mark();render();return}
+    if(a==='add'){var l2=g(p).slice(); l2.push(p==='addons'?{name:'',fee:0,per:false}:p==='menu'?{n:'',k:'Veg',p:''}:p==='faq'?{q:'',a:''}:{text:'',name:'',detail:''}); s(p,l2);mark();render();return}
     if(a==='mprev'){avM--;if(avM<0){avM=11;avY--}render();return}
     if(a==='mnext'){avM++;if(avM>11){avM=0;avY++}render();return}
     if(a==='day'){var d=b.getAttribute('data-d'), bk=(g('venues.'+vi+'.booked')||[]).slice(), k=bk.indexOf(d); if(k>-1)bk.splice(k,1); else bk.push(d); s('venues.'+vi+'.booked',bk);mark();render();return}

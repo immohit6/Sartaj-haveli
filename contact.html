@@ -2,6 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Contact | Sartaj Royal Group</title>
 <meta name="description" content="Check a date, send an enquiry or request a callback.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#0B2F27">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Sartaj Royal Group"><meta property="og:title" content="Contact | Sartaj Royal Group"><meta property="og:description" content="Check a date, send an enquiry or request a callback."><meta property="og:image" content="https://sartaj-royal-group.netlify.app/og-image.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -11,10 +13,12 @@
 <section class="sec deep" id="enquire"><div class="wrap two"><div class="rv"><div class="eyebrow">Check date</div><h2 style="margin-top:12px">Share the basics. We reply on WhatsApp.</h2>
 <form id="enqForm" novalidate><div class="f"><label for="fName">Your name</label><input id="fName" type="text" autocomplete="name" placeholder="Name"></div><div class="f"><label for="fPhone">Phone</label><input id="fPhone" type="tel" autocomplete="tel" placeholder="Phone"></div>
 <div class="f"><label for="fEvent">Event</label><select id="fEvent"><option>Wedding</option><option>Engagement</option><option>Birthday or party</option><option>Corporate event</option><option>Dinner out</option></select></div>
-<div class="f"><label for="fVenue">Venue</label><select id="fVenue"><option>Any venue</option></select></div><div class="f"><label for="fDate">Date</label><input id="fDate" type="date"></div><div class="f"><label for="fGuests">Guests</label><input id="fGuests" type="number" min="1" placeholder="400"></div></form>
+<div class="f"><label for="fVenue">Venue</label><select id="fVenue"><option>Any venue</option></select></div><div class="f"><label for="fDate">Date</label><input id="fDate" type="date"></div><div class="f"><label for="fGuests">Guests</label><input id="fGuests" type="number" min="1" placeholder="400"></div>
+<div class="f"><label for="fFood">Food</label><select id="fFood"><option>Not sure yet</option><option>Veg</option><option>Veg and non-veg</option><option>Jain</option></select></div><div class="f"><label for="fBudget">Budget per plate (optional)</label><input id="fBudget" type="text" inputmode="decimal" placeholder="₹1,200" maxlength="30"></div></form>
 <div class="info" id="cInfo" data-dyn hidden></div></div>
 <div class="rv"><div class="preview"><div class="eyebrow">Your message</div><div class="bubble" id="bubble" data-dyn></div><div class="row" style="align-items:center"><button class="btn btn-gold" id="copyBtn" type="button">Copy message</button><a class="btn btn-line" id="waSend" target="_blank" rel="noopener" hidden>Open WhatsApp</a><span class="copied" id="copied" hidden>Copied</span></div>
 <p class="note" id="waNote" style="margin-top:18px">Once your WhatsApp number is set, this button opens the chat with this message already written.</p><p style="margin:16px 0 0"><button class="btn btn-line" type="button" data-cb>Request a callback</button></p></div></div></div></section>
+<section class="sec cream" id="faqSec" hidden><div class="wrap two"><div class="rv"><div class="eyebrow">Good to know</div><h2 style="margin-top:12px">Questions we hear a lot.</h2><p style="margin-top:22px"><a class="btn btn-dark" id="faqWa" target="_blank" rel="noopener" hidden>Ask on WhatsApp</a></p></div><div class="faq rv" id="faqList" data-dyn></div></div></section>
 </main>
 <div id="ftr"></div>
 <div id="ext"></div>

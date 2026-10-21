@@ -22,8 +22,11 @@
     wa:'', phone:'', email:'', address:'', hours:'', maps:'', formUrl:'',
     promo:'Now planning weddings for the 2026 to 2027 season.',
     flags:{prices:false,cap:false,cal:false,menu:false},
-    media:{hero:'',dish:'',baBefore:'',baAfter:'',tour:''},
+    media:{hero:'',heroVideo:'',dish:'',baBefore:'',baAfter:'',tour:''},
     gallery:[], reviews:[],
+    stats:{events:'',since:'',rating:''}, ig:{handle:'',link:''},
+    story:{title:'Four venues. One family.',text:'',name:'',role:'',photo:''},
+    faq:[{q:'Can we bring our own decorator?',a:''},{q:'What time does the music have to stop?',a:''},{q:'Is alcohol allowed?',a:''},{q:'How much advance do we pay, and can we cancel?',a:''},{q:'Are rooms available for family?',a:''},{q:'Do you cater Jain or other special diets?',a:''}],
     sale:{on:false,name:'',pct:10,start:'',end:'',text:''},
     plates:[
       {name:'Silver',price:800,items:['Veg menu, 6 items','Hall and basic lighting','Welcome drinks']},
@@ -39,6 +42,7 @@
       {name:'Victoria Palace',short:'Victoria Palace',kind:'Weddings and functions',blurb:'A palace setting for weddings and family functions, styled the way you want it, down to the last detail.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Halls'],['','Cars parked'],['','Suites']),cap:{b:500,t:700,c:800},booked:[]}
     ]
   };
+  DEF.venues.forEach(function(v){v.pa='';v.hi='';v.best='';v.price='';v.parking='';v.rooms='';v.ac='';v.landmark='';v.tour=''});
   function merge(a,b){
     if(Array.isArray(b))return clone(b);
     if(b&&typeof b==='object'&&a&&typeof a==='object'&&!Array.isArray(a)){
@@ -52,7 +56,7 @@
     var c=merge(DEF,j);
     c.venues=DEF.venues.map(function(d,i){var v=merge(d,(j.venues&&j.venues[i])||{}); while(v.facts.length<4)v.facts.push({v:'',l:''}); v.facts=v.facts.slice(0,4); return v});
     c.plates=DEF.plates.map(function(d,i){return merge(d,(j.plates&&j.plates[i])||{})});
-    ['addons','menu','reviews','gallery'].forEach(function(k){if(!Array.isArray(j[k]))c[k]=clone(DEF[k])});
+    ['addons','menu','reviews','gallery','faq'].forEach(function(k){if(!Array.isArray(j[k]))c[k]=clone(DEF[k])});
     return c;
   }
   var CFG=build({}), LANG='en';
@@ -173,6 +177,17 @@
     'Address':['ਪਤਾ','पता'],
     'Opening hours':['ਖੁੱਲ੍ਹਣ ਦਾ ਸਮਾਂ','खुलने का समय'],
     'Directions':['ਦਿਸ਼ਾਵਾਂ','रास्ता'],
+    'Call':['ਕਾਲ','कॉल'],'Callback':['ਕਾਲ ਬੈਕ','कॉल बैक'],
+    'Our story':['ਸਾਡੀ ਕਹਾਣੀ','हमारी कहानी'],'Our story is coming soon.':['ਸਾਡੀ ਕਹਾਣੀ ਜਲਦੀ ਆ ਰਹੀ ਹੈ।','हमारी कहानी जल्द आ रही है।'],
+    'Events hosted':['ਸਮਾਗਮਾਂ ਦੀ ਮੇਜ਼ਬਾਨੀ','आयोजनों की मेज़बानी'],'Venues, one family':['ਵੈਨਿਊ, ਇੱਕ ਪਰਿਵਾਰ','वेन्यू, एक परिवार'],'Hosting families since':['ਪਰਿਵਾਰਾਂ ਦੀ ਮੇਜ਼ਬਾਨੀ ਸਾਲ','परिवारों की मेज़बानी वर्ष'],'Guest rating':['ਮਹਿਮਾਨਾਂ ਦੀ ਰੇਟਿੰਗ','मेहमानों की रेटिंग'],
+    'Compare venues':['ਵੈਨਿਊ ਦੀ ਤੁਲਨਾ','वेन्यू की तुलना'],'Which palace fits your day?':['ਕਿਹੜਾ ਮਹਿਲ ਤੁਹਾਡੇ ਦਿਨ ਲਈ ਠੀਕ ਹੈ?','कौन सा महल आपके दिन के लिए ठीक है?'],
+    'Type':['ਕਿਸਮ','प्रकार'],'Best for':['ਸਭ ਤੋਂ ਵਧੀਆ ਲਈ','किसके लिए सबसे अच्छा'],'Guests (banquet)':['ਮਹਿਮਾਨ (ਬੈਂਕੁਇਟ)','मेहमान (बैंक्वेट)'],'Starting price':['ਸ਼ੁਰੂਆਤੀ ਕੀਮਤ','शुरुआती क़ीमत'],'Guest rooms':['ਮਹਿਮਾਨ ਕਮਰੇ','मेहमान कमरे'],'Air conditioning':['ਏਅਰ ਕੰਡੀਸ਼ਨਿੰਗ','एयर कंडीशनिंग'],'View venue':['ਵੈਨਿਊ ਵੇਖੋ','वेन्यू देखें'],
+    'Good to know':['ਜਾਣਨ ਯੋਗ','जानने योग्य'],'Questions we hear a lot.':['ਸਵਾਲ ਜੋ ਸਾਨੂੰ ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਹਨ।','सवाल जो हमसे अक्सर पूछे जाते हैं।'],'Ask on WhatsApp':['WhatsApp ’ਤੇ ਪੁੱਛੋ','WhatsApp पर पूछें'],
+    'Follow along':['ਨਾਲ ਜੁੜੇ ਰਹੋ','जुड़े रहें'],'Fresh from our halls':['ਸਾਡੇ ਹਾਲਾਂ ਤੋਂ ਤਾਜ਼ਾ','हमारे हॉल से ताज़ा'],'Follow on Instagram':['Instagram ’ਤੇ ਫ਼ਾਲੋ ਕਰੋ','Instagram पर फ़ॉलो करें'],
+    'Find us':['ਸਾਨੂੰ ਲੱਭੋ','हमें ढूँढें'],'Easy to reach, easy to park.':['ਪਹੁੰਚਣਾ ਆਸਾਨ, ਪਾਰਕਿੰਗ ਆਸਾਨ।','पहुँचना आसान, पार्किंग आसान।'],'Get directions':['ਰਸਤਾ ਵੇਖੋ','रास्ता देखें'],
+    'Walk through':['ਅੰਦਰ ਦੀ ਝਲਕ','अंदर की झलक'],'Step inside before you visit.':['ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਅੰਦਰ ਝਾਤ ਮਾਰੋ।','आने से पहले अंदर झाँक लें।'],'Book a visit':['ਵਿਜ਼ਿਟ ਬੁੱਕ ਕਰੋ','विज़िट बुक करें'],'Near':['ਨੇੜੇ','पास'],
+    'Food':['ਖਾਣਾ','भोजन'],'Veg and non-veg':['ਸ਼ਾਕਾਹਾਰੀ ਤੇ ਮਾਸਾਹਾਰੀ','शाकाहारी और मांसाहारी'],'Jain':['ਜੈਨ','जैन'],'Not sure yet':['ਅਜੇ ਪੱਕਾ ਨਹੀਂ','अभी पक्का नहीं'],'Budget per plate (optional)':['ਪ੍ਰਤੀ ਪਲੇਟ ਬਜਟ (ਜ਼ਰੂਰੀ ਨਹੀਂ)','प्रति प्लेट बजट (वैकल्पिक)'],
+    'This page is not here.':['ਇਹ ਪੰਨਾ ਇੱਥੇ ਨਹੀਂ ਹੈ।','यह पन्ना यहाँ नहीं है।'],'Back to the home page':['ਮੁੱਖ ਪੰਨੇ ’ਤੇ ਵਾਪਸ','मुख्य पन्ने पर वापस'],
     'Visit and contact':['ਮਿਲੋ ਅਤੇ ਸੰਪਰਕ ਕਰੋ','मिलें और संपर्क करें']
   };
   var HERO={en:{ev:'Every',w:['wedding,','engagement,','reception,','celebration,'],a:'fit',b:'for',c:'royalty.'},
@@ -210,6 +225,10 @@
     var ph=validId(photo)?'<div class="ph" style="background-image:url('+pUrl(photo)+')"></div>':'';
     return '<div class="art'+(ph?' has':'')+'" style="background:'+SHEETBG[i%4]+'"><div class="glow" style="width:60%;height:50%;left:20%;top:5%;background:#E3C374"></div><div class="arches"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div>'+ph+'</div>';
   }
+  function vn(v){return (LANG==='pa'&&v.pa)||(LANG==='hi'&&v.hi)||v.name}
+  function isVid(u){return typeof u==='string'&&/^https:\/\/[\w.\-]+\/[\w\-\/.%]{1,300}\.(mp4|webm)$/i.test(u)}
+  function ytId(u){var m=/^https:\/\/(?:www\.)?(?:youtube\.com\/watch\?(?:[^#]*&)?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/.exec(u||''); return m?m[1]:''}
+  function mapQ(v){return [v.name,v.address||CFG.address,v.city].filter(Boolean).join(', ')}
   function factsOf(v,n){return v.facts.filter(function(f){return String(f.v).trim()&&String(f.l).trim()}).slice(0,n||4)}
 
   /* ---------- header, footer, floating buttons ---------- */
@@ -220,11 +239,11 @@
     var h='';
     if(ptxt)h+='<div class="promo"><span data-dyn>'+esc(sOn?ptxt:tr(ptxt))+'</span> <a href="contact.html#enquire">Check date</a></div>';
     h+='<header class="nav"><div class="wrap nav-in"><a class="brand" href="index.html" data-dyn>'+brandHtml()+'</a>'
-      +'<nav class="links" aria-label="Main"><div class="dd"><button type="button" aria-haspopup="true">Venues ▾</button><div class="dd-menu" data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(v.name)+'</a>'}).join('')+'</div></div>'
-      +'<a href="packages.html"'+on('packages.html')+'>Packages</a><a href="gallery.html"'+on('gallery.html')+'>Gallery</a><a href="contact.html"'+on('contact.html')+'>Contact</a></nav>'
+      +'<nav class="links" aria-label="Main"><div class="dd"><button type="button" aria-haspopup="true">Venues ▾</button><div class="dd-menu" data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(vn(v))+'</a>'}).join('')+'</div></div>'
+      +'<a href="packages.html"'+on('packages.html')+'>Packages</a><a href="gallery.html"'+on('gallery.html')+'>Gallery</a>'+(hasStory()?'<a href="story.html"'+on('story.html')+'>Our story</a>':'')+'<a href="contact.html"'+on('contact.html')+'>Contact</a></nav>'
       +'<div class="nav-r"><div class="lang" role="group" aria-label="Language"><button type="button" data-l="en" aria-pressed="'+(LANG==='en')+'">EN</button><button type="button" data-l="pa" aria-pressed="'+(LANG==='pa')+'">ਪੰਜਾਬੀ</button><button type="button" data-l="hi" aria-pressed="'+(LANG==='hi')+'">हिन्दी</button></div>'
       +'<button class="btn btn-gold nav-cta" type="button" data-cb>Request a callback</button><button class="burger" type="button" id="burger" aria-label="Menu" aria-expanded="false">☰</button></div></div>'
-      +'<div class="mmenu" id="mmenu"><small>Venues</small><span data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(v.name)+'</a>'}).join('')+'</span><small>Explore</small><a href="packages.html">Packages</a><a href="gallery.html">Gallery</a><a href="contact.html">Contact</a><a href="#" data-cb>Request a callback</a></div></header>';
+      +'<div class="mmenu" id="mmenu"><small>Venues</small><span data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(vn(v))+'</a>'}).join('')+'</span><small>Explore</small><a href="packages.html">Packages</a><a href="gallery.html">Gallery</a>'+(hasStory()?'<a href="story.html">Our story</a>':'')+'<a href="contact.html">Contact</a><a href="#" data-cb>Request a callback</a></div></header>';
     $('#hdr').innerHTML=h;
     var lines='';
     function line(x){lines+='<div>'+x+'</div>'}
@@ -235,17 +254,27 @@
     if(CFG.hours)line(esc(CFG.hours));
     if(/^https?:\/\//.test(CFG.maps||''))line('<a href="'+esc(CFG.maps)+'" target="_blank" rel="noopener">Get directions</a>');
     $('#ftr').innerHTML='<footer><div class="wrap"><div class="foot"><div><div class="brand" data-dyn style="margin-bottom:8px">'+brandHtml()+'</div><div data-dyn>'+esc(tr(CFG.tagline))+'</div><div class="cl" data-dyn style="margin-top:12px">'+lines+'</div></div>'
-      +'<div><b>Venues</b><span data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(v.name)+'</a>'}).join('')+'</span></div>'
-      +'<div><b>Explore</b><a href="packages.html">Packages</a><a href="gallery.html">Gallery</a><a href="contact.html">Contact</a><a href="#" data-cb>Request a callback</a></div></div>'
+      +'<div><b>Venues</b><span data-dyn>'+V.map(function(v,i){return '<a href="'+HREF[i]+'">'+esc(vn(v))+'</a>'}).join('')+'</span></div>'
+      +'<div><b>Explore</b><a href="packages.html">Packages</a><a href="gallery.html">Gallery</a>'+(hasStory()?'<a href="story.html">Our story</a>':'')+'<a href="contact.html">Contact</a><a href="#" data-cb>Request a callback</a></div></div>'
       +'<div class="copy" data-dyn>© '+new Date().getFullYear()+' '+esc(CFG.brand)+'</div></div></footer>';
+    var fl=$('#flt'); if(fl){
+      var wm='Hello '+CFG.brand+', I would like to check a date'+(PAGE==='venue'?' at '+CFG.venues[VI].name:'')+'.', wh=wa?'https://wa.me/'+wa+'?text='+encodeURIComponent(wm):'', ph=digits(CFG.phone);
+      var wsvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9 8.5c.3 3 3 5.7 6 6l1.2-1.3-2-1-1 .8c-.9-.4-1.7-1.2-2.1-2.1l.8-1-1-2z" fill="currentColor"/></svg>';
+      var psvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+      var dsvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 10h16M9 3v4M15 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      fl.innerHTML=(wh?'<a class="wafab" href="'+esc(wh)+'" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">'+wsvg+'<span>WhatsApp</span></a>':'')
+        +'<nav class="mbar" aria-label="Quick actions">'+(ph?'<a href="tel:+'+ph+'">'+psvg+'<span>Call</span></a>':'<a href="#" data-cb>'+psvg+'<span>Callback</span></a>')+(wh?'<a class="mb-wa" href="'+esc(wh)+'" target="_blank" rel="noopener">'+wsvg+'<span>WhatsApp</span></a>':'')+'<a class="mb-go" href="contact.html#enquire">'+dsvg+'<span>Check date</span></a></nav>';
+    }
     ['cbVenue'].forEach(function(id){var s=$('#'+id); if(!s)return; var k=s.selectedIndex; s.innerHTML='<option>Any venue</option>'+V.map(function(v){return '<option>'+esc(v.name)+'</option>'}).join(''); s.selectedIndex=Math.max(0,k)});
   }
+  function hasStory(){return !!String((CFG.story&&CFG.story.text)||'').trim()}
   function brandHtml(){
     return '<svg class="bmark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M5 24 3.5 11l7 6 5.5-9 5.5 9 7-6L27 24z"/><path d="M6.5 28h19"/><circle cx="3.5" cy="9.5" r="1.6"/><circle cx="16" cy="6" r="1.6"/><circle cx="28.5" cy="9.5" r="1.6"/></svg><span class="btxt">'+esc(CFG.brand)+'</span>';
   }
   function injectExtras(){
     var e=$('#ext'); if(!e)return;
-    e.innerHTML='<button class="fab" id="cbFab" type="button" data-cb>Request a callback</button>'
+    e.innerHTML='<div id="flt"></div><div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer"><button class="lb-x" type="button" data-lbx aria-label="Close">×</button><button class="lb-p" type="button" data-lbp aria-label="Previous photo">‹</button><img id="lbImg" alt=""><button class="lb-n" type="button" data-lbn aria-label="Next photo">›</button><div class="lb-c" id="lbC" aria-live="polite"></div></div>'
+    +'<button class="fab" id="cbFab" type="button" data-cb>Request a callback</button>'
     +'<div class="modal" id="cbModal" role="dialog" aria-modal="true" aria-labelledby="cbTitle" hidden><div class="mbox"><h3 id="cbTitle">Request a callback</h3><p>Leave your number and we will call you at a time that suits you.</p>'
     +'<form id="cbForm" novalidate><div class="f"><label for="cbName">Your name</label><input id="cbName" type="text" autocomplete="name" placeholder="Name" maxlength="80"></div>'
     +'<div class="f"><label for="cbPhone">Phone</label><input id="cbPhone" type="tel" autocomplete="tel" placeholder="Phone" maxlength="30"></div>'
@@ -310,10 +339,10 @@
 
   /* ---------- home ---------- */
   function renderHome(){
-    setPh($('#heroArt'),CFG.media.hero);
+    setPh($('#heroArt'),CFG.media.hero); heroMedia(); renderProof(); renderCompare(); renderIg();
     $('#vgrid').innerHTML=CFG.venues.map(function(v,i){
       var fs=factsOf(v,3);
-      return '<a class="vcard rv" href="'+HREF[i]+'">'+artHtml(i,v.photo)+'<div class="eyebrow" data-dyn>'+esc(tr(v.kind))+'</div><h3>'+esc(v.name)+'</h3><p data-dyn>'+esc(tr(v.blurb).slice(0,120))+(tr(v.blurb).length>120?'…':'')+'</p>'
+      return '<a class="vcard rv" href="'+HREF[i]+'">'+artHtml(i,v.photo)+'<div class="eyebrow" data-dyn>'+esc(tr(v.kind))+'</div><h3>'+esc(vn(v))+'</h3><p data-dyn>'+esc(tr(v.blurb).slice(0,120))+(tr(v.blurb).length>120?'…':'')+'</p>'
         +(fs.length?'<div class="chips" data-dyn>'+fs.map(function(f){return '<span class="chip">'+esc(f.v)+' '+esc(tr(f.l))+'</span>'}).join('')+'</div>':'')+'<span class="go" data-dyn>'+tr('Explore')+' →</span></a>';
     }).join('');
     $('#pkTease').innerHTML=CFG.plates.map(function(p,i){
@@ -321,11 +350,57 @@
     }).join('');
     $('#saleBar').innerHTML=saleOn()?'<span class="sale-badge" data-dyn>'+esc(CFG.sale.name||'Sale')+' · '+(+CFG.sale.pct)+'% off</span>':'';
     var gal=CFG.gallery.filter(validId), gs=$('#galTease'); gs.hidden=!gal.length;
-    $('#galGrid').innerHTML=gal.slice(0,6).map(function(id){return '<div style="background-image:url('+pUrl(id)+')"></div>'}).join('');
+    $('#galGrid').innerHTML=gal.slice(0,6).map(function(id){return tile(id)}).join('');
     var rv=CFG.reviews.filter(function(r){return String(r.text).trim()}), rs=$('#reviews'); rs.hidden=!rv.length;
     $('#revGrid').innerHTML=rv.map(function(r){return '<figure class="rev" data-dyn><p>“'+esc(r.text)+'”</p><b>'+esc(r.name)+'</b>'+(r.detail?'<small>'+esc(r.detail)+'</small>':'')+'</figure>'}).join('');
     var H=HERO[LANG], hw=$$('#hero-h1 .w'); if(hw.length){hw[0].textContent=H.ev; hw[1].textContent=H.a; hw[2].textContent=H.b; hw[3].textContent=H.c; $$('#rot span').forEach(function(s,i){s.textContent=H.w[i]})}
   }
+  var slideT=null;
+  function heroMedia(){
+    var art=$('#heroArt'); if(!art)return; var o=art.querySelector(':scope > .hmedia'); if(o)o.remove(); clearInterval(slideT);
+    var vid=CFG.media.heroVideo, h='', cls='';
+    var photos=[CFG.media.hero].concat(CFG.gallery).filter(validId); photos=photos.filter(function(x,i){return photos.indexOf(x)===i}).slice(0,4);
+    if(isVid(vid)&&!reduce){h='<video class="hvid" src="'+esc(vid)+'" '+(validId(CFG.media.hero)?'poster="'+esc(CFG.media.hero)+'" ':'')+'autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>'}
+    else if(photos.length>1){
+      h=photos.map(function(id,i){return '<div class="hs'+(i?'':' on')+'" style="background-image:url('+pUrl(id)+')"></div>'}).join('')+'<div class="hdots" aria-hidden="true">'+photos.map(function(x,i){return '<i'+(i?'':' class="on"')+'></i>'}).join('')+'</div>';
+      cls=' slides';
+    }
+    if(!h)return;
+    var d=document.createElement('div'); d.className='hmedia'+cls; d.innerHTML=h; art.appendChild(d); art.classList.add('has');
+    if(cls&&!reduce){var hs=d.querySelectorAll('.hs'), dots=d.querySelectorAll('.hdots i'), k=0; slideT=setInterval(function(){hs[k].classList.remove('on'); dots[k].classList.remove('on'); k=(k+1)%hs.length; hs[k].classList.add('on'); dots[k].classList.add('on')},5500)}
+  }
+  function renderProof(){
+    var el=$('#proof'); if(!el)return; var st=CFG.stats||{}, it=[];
+    if(String(st.events||'').trim())it.push([esc(st.events),'Events hosted']);
+    it.push([CFG.venues.length,'Venues, one family']);
+    if(String(st.since||'').trim())it.push([esc(st.since),'Hosting families since']);
+    if(String(st.rating||'').trim())it.push([esc(st.rating)+' <i class="st" aria-hidden="true">★</i>','Guest rating']);
+    el.hidden=it.length<2;
+    $('#proofGrid').innerHTML=it.map(function(x){return '<div><b>'+x[0]+'</b><span>'+tr(x[1])+'</span></div>'}).join('');
+  }
+  function renderCompare(){
+    var el=$('#cmpSec'); if(!el)return; var V=CFG.venues;
+    var rows=[['Best for',function(v){return v.best}],['Guests (banquet)',function(v){return (CFG.flags.cap&&+v.cap.b)?(+v.cap.b).toLocaleString('en-IN'):''}],['Starting price',function(v){return v.price}],['Parking',function(v){return v.parking}],['Guest rooms',function(v){return v.rooms}],['Air conditioning',function(v){return v.ac}]]
+      .filter(function(r){return V.some(function(v){return String(r[1](v)||'').trim()})});
+    el.hidden=!rows.length; if(!rows.length)return;
+    var h='<table class="cmp"><thead><tr><td></td>'+V.map(function(v,i){return '<th scope="col"><a href="'+HREF[i]+'">'+esc(vn(v))+'</a></th>'}).join('')+'</tr></thead><tbody>'
+      +'<tr><th scope="row">'+tr('Type')+'</th>'+V.map(function(v){return '<td>'+esc(tr(v.kind))+'</td>'}).join('')+'</tr>'
+      +rows.map(function(r){return '<tr><th scope="row">'+tr(r[0])+'</th>'+V.map(function(v){var x=String(r[1](v)||'').trim(); return '<td>'+(x?esc(x):'<span class="dash">–</span>')+'</td>'}).join('')+'</tr>'}).join('')
+      +'<tr class="go"><td></td>'+V.map(function(v,i){return '<td><a class="btn btn-gold" href="'+HREF[i]+'">'+tr('View venue')+'</a></td>'}).join('')+'</tr></tbody></table>';
+    $('#cmpWrap').innerHTML=h;
+  }
+  function renderIg(){
+    var el=$('#igSec'); if(!el)return; var ig=CFG.ig||{}, hd=String(ig.handle||'').replace(/^@/,'').replace(/[^\w.]/g,'');
+    el.hidden=!hd; if(!hd)return;
+    var url=/^https:\/\//.test(ig.link||'')?ig.link:'https://www.instagram.com/'+hd+'/';
+    $('#igHandle').textContent='@'+hd; $('#igBtn').href=url;
+    var ph=[]; CFG.gallery.filter(validId).forEach(function(x){ph.push(x)}); CFG.venues.forEach(function(v){if(validId(v.photo))ph.push(v.photo); v.gallery.filter(validId).forEach(function(x){ph.push(x)})});
+    ph=ph.filter(function(x,i){return ph.indexOf(x)===i}).slice(0,6);
+    $('#igGrid').innerHTML=ph.map(function(id){return '<a href="'+esc(url)+'" target="_blank" rel="noopener" aria-label="Open Instagram" style="background-image:url('+pUrl(id)+')"></a>'}).join('');
+    $('#igGrid').hidden=!ph.length;
+  }
+  /* photo tile (opens the viewer) */
+  function tile(id){return '<div role="button" tabindex="0" data-src="'+esc(id)+'" aria-label="Open photo" style="background-image:url('+pUrl(id)+')"></div>'}
   var rotI=0;
   function startRot(){
     var rw=$$('#rot span'); if(!rw.length||reduce)return;
@@ -337,15 +412,16 @@
   function renderVenue(){
     var v=CFG.venues[VI];
     $('#vArt').innerHTML=artHtml(VI,v.photo);
-    $('#vKind').textContent=tr(v.kind); $('#vName').textContent=v.name; $('#vBlurb').textContent=tr(v.blurb);
-    document.title=v.name+' | '+CFG.brand;
+    $('#vKind').textContent=tr(v.kind); $('#vName').textContent=vn(v); $('#vBlurb').textContent=tr(v.blurb);
+    document.title=vn(v)+' | '+CFG.brand;
     var loc=[v.city,v.address].filter(Boolean).join(' · '), lo=$('#vLoc'); lo.textContent=loc; lo.hidden=!loc;
     var ab=$('#vAbout'); ab.textContent=v.about||''; ab.hidden=!v.about;
     var fs=factsOf(v,4), fe=$('#vFacts'); fe.hidden=!fs.length; fe.innerHTML=fs.map(function(f){return '<div><b>'+esc(f.v)+'</b>'+esc(tr(f.l))+'</div>'}).join('');
     $('#vAboutSec').hidden=!v.about; $('#vChips').innerHTML=fs.map(function(f){return '<span class="chip">'+esc(f.v)+' '+esc(tr(f.l))+'</span>'}).join('');
     var g=v.gallery.filter(validId), gs=$('#vGalSec'); gs.hidden=!g.length;
-    $('#vGal').innerHTML=g.map(function(id){return '<div style="background-image:url('+pUrl(id)+')"></div>'}).join('');
-    $('#others').innerHTML=CFG.venues.map(function(o,i){if(i===VI)return '';return '<a class="vcard rv in" href="'+HREF[i]+'">'+artHtml(i,o.photo)+'<div class="eyebrow" data-dyn>'+esc(tr(o.kind))+'</div><h3>'+esc(o.name)+'</h3><span class="go" data-dyn>'+tr('Explore')+' →</span></a>'}).join('');
+    $('#vGal').innerHTML=g.map(function(id){return tile(id)}).join('');
+    renderVenueExtras(v);
+    $('#others').innerHTML=CFG.venues.map(function(o,i){if(i===VI)return '';return '<a class="vcard rv in" href="'+HREF[i]+'">'+artHtml(i,o.photo)+'<div class="eyebrow" data-dyn>'+esc(tr(o.kind))+'</div><h3>'+esc(vn(o))+'</h3><span class="go" data-dyn>'+tr('Explore')+' →</span></a>'}).join('');
     /* restaurant menu on Sartaj Haveli */
     var ms=$('#menuSec'); if(ms&&ms.getAttribute('data-on')==='1'){
       setPh($('#dishArt'),CFG.media.dish);
@@ -356,6 +432,20 @@
     var sn=$('#seatNote'); sn.textContent=CFG.flags.cap?tr('Guests in this layout.'):tr('Guests in this layout. Sample figures until your real capacities are added.');
     var cn=$('#calNote'); cn.textContent=CFG.flags.cal?tr('Dates marked as booked are not available. Choose an open date and send it to us.'):tr('Sample dates only. We will connect this to your real bookings.');
     drawSeat(); drawCal();
+  }
+  function renderVenueExtras(v){
+    var q=encodeURIComponent(mapQ(v)), has=!!(v.address||CFG.address||v.city), ms=$('#vMapSec');
+    if(ms){ms.hidden=!has;
+      if(has){
+        var mp=$('#vMap'); var src='https://maps.google.com/maps?q='+q+'&output=embed'; if(mp.getAttribute('data-q')!==q){mp.setAttribute('data-q',q); mp.innerHTML='<iframe title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="'+src+'"></iframe>'}
+        $('#vDir').href='https://www.google.com/maps/dir/?api=1&destination='+q;
+        var rows=''; function r(ic,t){if(t)rows+='<li><b>'+ic+'</b><span>'+esc(t)+'</span></li>'}
+        r(tr('Address'),[v.address||CFG.address,v.city].filter(Boolean).join(', ')); r(tr('Parking'),v.parking); r('Near',v.landmark);
+        $('#vInfo').innerHTML=rows; $('#vInfo').hidden=!rows;
+      }}
+    var ts=$('#vTourSec'); if(ts){var t=String(v.tour||'').trim(), yid=ytId(t), box=$('#vTour'); ts.hidden=!(yid||isVid(t));
+      if(yid)box.innerHTML='<iframe title="Walk-through video" loading="lazy" allowfullscreen src="https://www.youtube-nocookie.com/embed/'+yid+'"></iframe>';
+      else if(isVid(t))box.innerHTML='<video controls playsinline preload="metadata" src="'+esc(t)+'"></video>'; else box.innerHTML='';}
   }
   function filterMenu(d){$$('#menu li').forEach(function(li){li.hidden=!(d==='All'||li.getAttribute('data-k')===d)})}
   function circ(cx,cy,r,cls,d){return '<circle class="'+cls+' pop" cx="'+cx+'" cy="'+cy+'" r="'+r+'" style="animation-delay:'+d+'ms"/>'}
@@ -435,7 +525,7 @@
     CFG.venues.forEach(function(v){if(validId(v.photo))all.push(v.photo); v.gallery.filter(validId).forEach(function(id){all.push(id)})});
     var seen={}; all=all.filter(function(id){if(seen[id])return false; seen[id]=1; return true});
     $('#galGrid').className='gal'+(all.length?'':' soft');
-    $('#galGrid').innerHTML=all.length?all.map(function(id){return '<div style="background-image:url('+pUrl(id)+')"></div>'}).join(''):'<div></div><div></div><div></div><div></div><div></div><div></div>';
+    $('#galGrid').innerHTML=all.length?all.map(function(id){return tile(id)}).join(''):'<div></div><div></div><div></div><div></div><div></div><div></div>';
     $('#galEmpty').hidden=!!all.length;
     var b=CFG.media.baBefore, a=CFG.media.baAfter, bs=$('#baSec'); bs.hidden=!(validId(b)&&validId(a));
     $('#baBefore').style.backgroundImage=validId(b)?'url('+pUrl(b)+')':''; $('#baAfter').style.backgroundImage=validId(a)?'url('+pUrl(a)+')':'';
@@ -453,18 +543,42 @@
     row('Email',esc(CFG.email)); row(tr('Opening hours'),esc(CFG.hours)); row(tr('Directions'),/^https?:\/\//.test(CFG.maps||'')?'<a href="'+esc(CFG.maps)+'" target="_blank" rel="noopener">Google Maps</a>':'');
     var ie=$('#cInfo'); ie.hidden=!rows; ie.innerHTML=rows;
     $('#waNote').hidden=!!digits(CFG.wa);
-    renderMsg();
+    renderFaq(); renderMsg();
+  }
+  function renderFaq(){
+    var el=$('#faqSec'); if(!el)return; var f=(CFG.faq||[]).filter(function(x){return String(x.q).trim()&&String(x.a).trim()}); el.hidden=!f.length;
+    $('#faqList').innerHTML=f.map(function(x){return '<details><summary>'+esc(x.q)+'</summary><p>'+esc(x.a)+'</p></details>'}).join('');
+    var wa=digits(CFG.wa), b=$('#faqWa'); if(b){b.hidden=!wa; if(wa)b.href='https://wa.me/'+wa+'?text='+encodeURIComponent('Hello '+CFG.brand+', I have a question.')}
   }
   var PKG=(function(){try{return new URLSearchParams(location.search).get('pkg')||''}catch(x){return ''}})();
   function renderMsg(){
     var b=$('#bubble'); if(!b)return;
-    var nm=$('#fName').value.trim(), phone=$('#fPhone').value.trim(), e=$('#fEvent').value, v=$('#fVenue').value, d=$('#fDate').value, n=$('#fGuests').value, anyV=($('#fVenue').selectedIndex===0), BR=CFG.brand, msg;
-    if(LANG==='pa') msg='ਸਤ ਸ੍ਰੀ ਅਕਾਲ, '+BR+' ਜੀ। ਮੇਰਾ ਨਾਮ '+(nm||'[ਤੁਹਾਡਾ ਨਾਮ]')+' ਹੈ। ਮੈਨੂੰ '+e+' ਲਈ ਤਾਰੀਖ਼ ਅਤੇ ਪੈਕੇਜ ਦੀ ਜਾਣਕਾਰੀ ਚਾਹੀਦੀ ਹੈ।'+(anyV?'':' ਵੈਨਿਊ: '+v+'।')+(d?' ਤਾਰੀਖ਼: '+d+'।':'')+(n?' ਮਹਿਮਾਨ: ਲਗਭਗ '+n+'।':'')+(PKG?' ਮੈਨੂੰ ਇਹ ਪਸੰਦ ਹੈ: '+PKG+'।':'')+(phone?' ਮੇਰਾ ਫ਼ੋਨ: '+phone+'।':'');
-    else if(LANG==='hi') msg='नमस्ते '+BR+' जी। मेरा नाम '+(nm||'[आपका नाम]')+' है। मुझे '+e+' के लिए तारीख़ और पैकेज की जानकारी चाहिए।'+(anyV?'':' वेन्यू: '+v+'।')+(d?' तारीख़: '+d+'।':'')+(n?' मेहमान: लगभग '+n+'।':'')+(PKG?' मुझे यह पसंद है: '+PKG+'।':'')+(phone?' मेरा फ़ोन: '+phone+'।':'');
-    else msg='Hello '+BR+', I am '+(nm||'[your name]')+'. I am planning a '+e.toLowerCase()+(anyV?'':' at '+v)+(d?' on '+d:'')+(n?' for about '+n+' guests':'')+'.'+(PKG?' I like the '+PKG+'.':'')+' Please share availability and packages.'+(phone?' You can reach me on '+phone+'.':'');
+    var nm=$('#fName').value.trim(), phone=$('#fPhone').value.trim(), e=$('#fEvent').value, food=($('#fFood').selectedIndex>0?$('#fFood').value:''), bud=$('#fBudget').value.trim(), v=$('#fVenue').value, d=$('#fDate').value, n=$('#fGuests').value, anyV=($('#fVenue').selectedIndex===0), BR=CFG.brand, msg;
+    if(LANG==='pa') msg='ਸਤ ਸ੍ਰੀ ਅਕਾਲ, '+BR+' ਜੀ। ਮੇਰਾ ਨਾਮ '+(nm||'[ਤੁਹਾਡਾ ਨਾਮ]')+' ਹੈ। ਮੈਨੂੰ '+e+' ਲਈ ਤਾਰੀਖ਼ ਅਤੇ ਪੈਕੇਜ ਦੀ ਜਾਣਕਾਰੀ ਚਾਹੀਦੀ ਹੈ।'+(anyV?'':' ਵੈਨਿਊ: '+v+'।')+(d?' ਤਾਰੀਖ਼: '+d+'।':'')+(n?' ਮਹਿਮਾਨ: ਲਗਭਗ '+n+'।':'')+(food?' ਖਾਣਾ: '+food+'।':'')+(bud?' ਬਜਟ: ਪ੍ਰਤੀ ਪਲੇਟ '+bud+'।':'')+(PKG?' ਮੈਨੂੰ ਇਹ ਪਸੰਦ ਹੈ: '+PKG+'।':'')+(phone?' ਮੇਰਾ ਫ਼ੋਨ: '+phone+'।':'');
+    else if(LANG==='hi') msg='नमस्ते '+BR+' जी। मेरा नाम '+(nm||'[आपका नाम]')+' है। मुझे '+e+' के लिए तारीख़ और पैकेज की जानकारी चाहिए।'+(anyV?'':' वेन्यू: '+v+'।')+(d?' तारीख़: '+d+'।':'')+(n?' मेहमान: लगभग '+n+'।':'')+(food?' भोजन: '+food+'।':'')+(bud?' बजट: प्रति प्लेट '+bud+'।':'')+(PKG?' मुझे यह पसंद है: '+PKG+'।':'')+(phone?' मेरा फ़ोन: '+phone+'।':'');
+    else msg='Hello '+BR+', I am '+(nm||'[your name]')+'. I am planning a '+e.toLowerCase()+(anyV?'':' at '+v)+(d?' on '+d:'')+(n?' for about '+n+' guests':'')+'.'+(food?' Food: '+food.toLowerCase()+'.':'')+(bud?' Budget is about '+bud+' per plate.':'')+(PKG?' I like the '+PKG+'.':'')+' Please share availability and packages.'+(phone?' You can reach me on '+phone+'.':'');
     b.textContent=msg;
     var wa=digits(CFG.wa), a=$('#waSend'); a.hidden=!wa; if(wa)a.href='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);
   }
+
+  function renderStory(){
+    var st=CFG.story||{}, tx=String(st.text||'').trim(), el=$('#stBody');
+    $('#stTitle').textContent=st.title||'Our story';
+    $('#stEmpty').hidden=!!tx; $('#stMain').hidden=!tx; if(!tx)return;
+    el.innerHTML=tx.split(/\n\s*\n/).map(function(p){return '<p>'+esc(p.trim()).replace(/\n/g,'<br>')+'</p>'}).join('');
+    var ph=$('#stPhoto'); setPh(ph,st.photo);
+    var sg=$('#stSign'); sg.innerHTML=(st.name?'<b>'+esc(st.name)+'</b>':'')+(st.role?'<small>'+esc(st.role)+'</small>':''); sg.hidden=!(st.name||st.role);
+  }
+
+  /* ---------- photo viewer ---------- */
+  var LB={list:[],i:0,x:0};
+  function lbOpen(box,tile){
+    LB.list=Array.prototype.slice.call(box.querySelectorAll(':scope > [data-src]')).map(function(t){return t.getAttribute('data-src')}); LB.i=Math.max(0,LB.list.indexOf(tile.getAttribute('data-src')));
+    LB.back=document.activeElement; $('#lb').hidden=false; document.body.classList.add('lock'); lbShow(); $('#lb .lb-x').focus();
+  }
+  function lbShow(){var n=LB.list.length; $('#lbImg').src=LB.list[LB.i]; $('#lbC').textContent=(LB.i+1)+' / '+n; $('#lb').classList.toggle('one',n<2)}
+  function lbGo(d){var n=LB.list.length; if(n<2)return; LB.i=(LB.i+d+n)%n; lbShow()}
+  function lbClose(){$('#lb').hidden=true; document.body.classList.remove('lock'); $('#lbImg').removeAttribute('src'); if(LB.back&&LB.back.focus)LB.back.focus()}
 
   /* ---------- render everything ---------- */
   function renderAll(){
@@ -474,6 +588,8 @@
     if(PAGE==='packages')renderPackages();
     if(PAGE==='gallery')renderGallery();
     if(PAGE==='contact')renderContact();
+    if(PAGE==='packages')renderFaq();
+    if(PAGE==='story')renderStory();
     i18n(document.body);
     observe();
   }
@@ -490,6 +606,10 @@
   document.addEventListener('click',function(e){
     var t=e.target, b;
     if((b=t.closest('[data-l]'))){setLang(b.getAttribute('data-l'));hideLang();return}
+    if(t.closest('[data-lbx]')||t.id==='lb'){lbClose();return}
+    if(t.closest('[data-lbp]')){lbGo(-1);return}
+    if(t.closest('[data-lbn]')){lbGo(1);return}
+    if((b=t.closest('[data-src]'))&&b.parentNode&&(b.parentNode.classList.contains('gal'))){lbOpen(b.parentNode,b);return}
     if(t.closest('[data-cb]')){e.preventDefault();var mm=$('#mmenu');if(mm)mm.classList.remove('open');openCb();return}
     if(t.closest('#burger')){var m=$('#mmenu'),o=m.classList.toggle('open');$('#burger').setAttribute('aria-expanded',o);return}
     if(t.closest('#cbClose')||t.id==='cbModal'){closeCb();return}
@@ -514,7 +634,12 @@
     else if(e.target.id==='baRange')$('#ba').style.setProperty('--p',e.target.value+'%');
   });
   document.addEventListener('change',function(e){if(e.target.closest&&e.target.closest('#enqForm'))renderMsg()});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#langModal')&&!$('#langModal').hidden){setLang('en');hideLang();return} if(e.key==='Escape'&&$('#cbModal')&&!$('#cbModal').hidden)closeCb()});
+  document.addEventListener('touchstart',function(e){if(e.target.closest&&e.target.closest('#lb')&&e.touches.length===1)LB.x=e.touches[0].clientX},{passive:true});
+  document.addEventListener('touchend',function(e){if(e.target.closest&&e.target.closest('#lb')&&e.changedTouches.length){var d=e.changedTouches[0].clientX-LB.x; if(Math.abs(d)>50)lbGo(d<0?1:-1)}},{passive:true});
+  document.addEventListener('keydown',function(e){
+    var lb=$('#lb'); if(lb&&!lb.hidden){if(e.key==='Escape')lbClose(); else if(e.key==='ArrowLeft')lbGo(-1); else if(e.key==='ArrowRight')lbGo(1); return}
+    if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute&&e.target.getAttribute('data-src')&&e.target.parentNode.classList.contains('gal')){e.preventDefault();lbOpen(e.target.parentNode,e.target);return}
+    if(e.key==='Escape'&&$('#langModal')&&!$('#langModal').hidden){setLang('en');hideLang();return} if(e.key==='Escape'&&$('#cbModal')&&!$('#cbModal').hidden)closeCb()});
 
   /* ---------- boot ---------- */
   injectExtras(); renderAll(); startRot();
