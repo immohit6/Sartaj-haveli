@@ -1,0 +1,351 @@
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function validId(x){return typeof x==='string'&&/^https:\/\/[\w.\-]+\/[\w\-\/.%]{1,300}$/.test(x)}
+  function digits(s){return String(s||'').replace(/\D/g,'')}
+  function clone(o){return JSON.parse(JSON.stringify(o))}
+  function pad2(n){return (n<10?'0':'')+n}
+  function todayISO(){var t=new Date();return t.getFullYear()+'-'+pad2(t.getMonth()+1)+'-'+pad2(t.getDate())}
+  function lc1(s){return /^[A-Z][a-z]/.test(s)?s.charAt(0).toLowerCase()+s.slice(1):s}
+  var F4=function(a,b,c,d){return [a,b,c,d].map(function(x){return {v:x[0],l:x[1]}})};
+  var DEF={
+    brand:'Sartaj Royal Group', tagline:'Weddings, functions and fine dining.',
+    wa:'', phone:'', email:'', address:'', hours:'', maps:'',
+    promo:'Now planning weddings for the 2026 to 2027 season.',
+    flags:{prices:false,cap:false,cal:false,menu:false},
+    media:{hero:'',heroVideo:'',dish:'',baBefore:'',baAfter:'',tour:''},
+    gallery:[], reviews:[],
+    stats:{events:'',since:'',rating:''}, ig:{handle:'',link:''},
+    story:{title:'Four venues. One family.',text:'',name:'',role:'',photo:''},
+    faq:[{q:'Can we bring our own decorator?',a:''},{q:'What time does the music have to stop?',a:''},{q:'Is alcohol allowed?',a:''},{q:'How much advance do we pay, and can we cancel?',a:''},{q:'Are rooms available for family?',a:''},{q:'Do you cater Jain or other special diets?',a:''}],
+    sale:{on:false,name:'',pct:10,start:'',end:'',text:''},
+    plates:[
+      {name:'Silver',price:800,items:['Veg menu, 6 items','Hall and basic lighting','Welcome drinks']},
+      {name:'Gold',price:1200,items:['Veg and non-veg, 10 items','Stage and themed decor','Welcome drinks and dessert']},
+      {name:'Royal',price:1800,items:['Full menu, live counters','Premium decor and lighting','Dedicated event manager']}
+    ],
+    addons:[{name:'Extra decor',fee:150000,per:false},{name:'DJ and sound',fee:40000,per:false},{name:'Photo and video',fee:90000,per:false},{name:'Live chaat counter',fee:150,per:true}],
+    menu:[{n:'Paneer Tikka',k:'Veg',p:''},{n:'Dal Makhani',k:'Veg',p:''},{n:'Sarson da Saag',k:'Veg',p:''},{n:'Butter Chicken',k:'Non-veg',p:''},{n:'Amritsari Fish',k:'Non-veg',p:''},{n:'Mutton Rogan Josh',k:'Non-veg',p:''}],
+    venues:[
+      {name:'Sartaj Haveli',short:'Sartaj Haveli',kind:'Banquet hall and restaurant',blurb:'Dine in a heritage haveli, or take over the whole banquet hall for the evening. One kitchen, one team, both sides of your celebration.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Halls'],['Daily','Lunch and dinner'],['','Parking']),cap:{b:300,t:400,c:450},booked:[]},
+      {name:'Kings Villa Palace',short:'Kings Villa',kind:'Weddings and functions',blurb:'Open lawns, a grand stage and room for the biggest guest lists. Built for the wedding you have been picturing for years.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Cars parked'],['','Suites'],['','Halls']),cap:{b:1000,t:1400,c:1500},booked:[]},
+      {name:'Grand Marrie Villa Palace',short:'Grand Marrie',kind:'Weddings and functions',blurb:'A chandelier hall for receptions and engagements that feel intimate and still look grand.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Halls'],['','Suites'],['','Parking']),cap:{b:600,t:800,c:900},booked:[]},
+      {name:'Victoria Palace',short:'Victoria Palace',kind:'Weddings and functions',blurb:'A palace setting for weddings and family functions, styled the way you want it, down to the last detail.',about:'',city:'',address:'',photo:'',gallery:[],facts:F4(['','Guests'],['','Halls'],['','Cars parked'],['','Suites']),cap:{b:500,t:700,c:800},booked:[]}
+    ]
+  };
+  DEF.venues.forEach(function(v){v.pa='';v.hi='';v.best='';v.price='';v.parking='';v.rooms='';v.ac='';v.landmark='';v.tour=''});
+  function merge(a,b){
+    if(Array.isArray(b))return clone(b);
+    if(b&&typeof b==='object'&&a&&typeof a==='object'&&!Array.isArray(a)){
+      var o={}; Object.keys(a).forEach(function(k){o[k]=a[k]});
+      Object.keys(b).forEach(function(k){o[k]=(k in a)?merge(a[k],b[k]):b[k]}); return o;
+    }
+    return b===undefined?a:b;
+  }
+  function build(j){
+    j=(j&&typeof j==='object')?j:{};
+    var c=merge(DEF,j);
+    c.venues=DEF.venues.map(function(d,i){var v=merge(d,(j.venues&&j.venues[i])||{}); while(v.facts.length<4)v.facts.push({v:'',l:''}); v.facts=v.facts.slice(0,4); return v});
+    c.plates=DEF.plates.map(function(d,i){return merge(d,(j.plates&&j.plates[i])||{})});
+    ['addons','menu','reviews','gallery','faq'].forEach(function(k){if(!Array.isArray(j[k]))c[k]=clone(DEF[k])});
+    return c;
+  }
+
+
+  var S={DEF:DEF,build:build,clone:clone,esc:esc,validId:validId,digits:digits,live:null,draft:null};
+  var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var esc=S.esc, validId=S.validId;
+  var panel=$('#admin'), main=$('#aMain'), status=$('#aStatus'), fab=$('#aInboxFlag');
+  var armed=false, W=null, tab='contact', vi=0, dirty=false, CB=[], unsub=null;
+  var today=new Date(), avY=today.getFullYear(), avM=today.getMonth();
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var TABS=[['contact','Contact'],['venues','Venues'],['avail','Availability'],['pricing','Prices'],['sale','Sales'],['menu','Menu'],['photos','Photos'],['extras','Extras'],['reviews','Reviews'],['inbox','Callbacks']];
+
+  function say(t,bad){status.textContent=t||'';status.style.color=bad?'#F2A3A3':''}
+  function g(p){return p.split('.').reduce(function(o,k){return o==null?o:o[k]},W)}
+  function s(p,v){var ks=p.split('.'),o=W;for(var i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=v}
+  function mark(){dirty=true;say('Unsaved changes')}
+
+  function fld(label,p,o){
+    o=o||{}; var v=g(p); if(v==null)v=''; var h=o.hint?'<small>'+esc(o.hint)+'</small>':'', t=o.type||'text', ph=o.ph?' placeholder="'+esc(o.ph)+'"':'';
+    if(t==='area')return '<label class="af">'+esc(label)+'<textarea data-p="'+p+'"'+ph+'>'+esc(v)+'</textarea>'+h+'</label>';
+    if(t==='lines')return '<label class="af">'+esc(label)+'<textarea data-p="'+p+'" data-t="lines"'+ph+'>'+esc((v||[]).join('\n'))+'</textarea>'+h+'</label>';
+    if(t==='check')return '<label class="af chk"><input type="checkbox" data-p="'+p+'"'+(v?' checked':'')+'><span>'+esc(label)+(o.hint?'<br><small style="color:var(--mute)">'+esc(o.hint)+'</small>':'')+'</span></label>';
+    if(t==='sel')return '<label class="af">'+esc(label)+'<select data-p="'+p+'">'+o.opts.map(function(x){return '<option'+(x===v?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>'+h+'</label>';
+    return '<label class="af">'+esc(label)+'<input type="'+(t==='num'?'number':t)+'" data-p="'+p+'"'+(t==='num'?' data-t="n" inputmode="decimal"':'')+' value="'+esc(v)+'"'+ph+'>'+h+'</label>';
+  }
+  var VPAGE=['sartaj-haveli.html','kings-villa-palace.html','grand-marrie-villa-palace.html','victoria-palace.html'];
+  var SL={
+    'media.hero':{t:'Home page big photo',where:'The big picture at the very top of the home page.',locs:[{l:'Home page, top',page:'index.html',sel:'#heroArt'}]},
+    'media.dish':{t:'Restaurant photo',where:'Next to the menu on the Sartaj Haveli page.',locs:[{l:'Sartaj Haveli, menu',page:'sartaj-haveli.html',sel:'#dishArt'}]},
+    'media.baBefore':{t:'Before photo',where:'The left side of the before and after slider on the Gallery page.',locs:[{l:'Gallery, slider',page:'gallery.html',sel:'#ba',force:'This slider appears once you add both before and after photos'}]},
+    'media.baAfter':{t:'After photo',where:'The right side of the before and after slider on the Gallery page.',locs:[{l:'Gallery, slider',page:'gallery.html',sel:'#ba',force:'This slider appears once you add both before and after photos'}]},
+    'story.photo':{t:'Our story photo',where:'Beside your story on the Our story page.',locs:[{l:'Our story page',page:'story.html',sel:'#stPhoto',force:'This page shows once you write your story'}]},
+    'gallery':{t:'Home page gallery',where:'The "A look inside" strip on the home page, and the Gallery page.',locs:[{l:'Home page, gallery',page:'index.html',sel:'#galTease',force:'This gallery appears once you add a photo'},{l:'Gallery page',page:'gallery.html',sel:'#galGrid'}]}
+  };
+  function slotMeta(p){
+    var m=/^venues\.(\d+)\.(photo|gallery)$/.exec(p);
+    if(m){var i=+m[1], nm=W.venues[i].short||W.venues[i].name, pg=VPAGE[i];
+      if(m[2]==='photo')return {where:'The top of the '+nm+' page, and its card on the home page.',locs:[{l:nm+' page, top',page:pg,sel:'#vArt'},{l:'Home page, '+nm+' card',page:'index.html',sel:'#vgrid .vcard:nth-child('+(i+1)+')'}]};
+      return {where:'The "A look inside" gallery on the '+nm+' page, and the Gallery page.',locs:[{l:nm+' page, gallery',page:pg,sel:'#vGalSec',force:'This gallery appears once you add a photo'},{l:'Gallery page',page:'gallery.html',sel:'#galGrid'}]};
+    }
+    return SL[p]||{where:'',locs:[]};
+  }
+  function photo(label,p,hint){
+    var id=g(p), has=validId(id), m=slotMeta(p);
+    return '<div class="a-card slot"><b>'+esc(label)+'</b><p class="slot-w"><span>Shows on:</span> '+esc(m.where)+'</p><div class="pf"><div class="pv"'+(has?' style="background-image:url('+id+')"':'')+'></div>'
+      +'<label class="a-btn" style="display:inline-flex;align-items:center;cursor:pointer">'+(has?'Replace photo':'Choose photo')+'<input type="file" accept="image/*" data-up="'+p+'" hidden></label>'
+      +'<button type="button" class="a-btn" data-act="where" data-p="'+p+'">Show me where</button>'
+      +(has?'<button type="button" class="a-btn dng" data-act="clr" data-p="'+p+'">Remove</button>':'')+'</div>'+(hint?'<small style="color:var(--mute)">'+esc(hint)+'</small>':'')+'</div>';
+  }
+  function gallery(label,p){
+    var arr=g(p)||[], m=slotMeta(p);
+    return '<div class="a-card slot"><b>'+esc(label)+'</b><p class="slot-w"><span>Shows on:</span> '+esc(m.where)+'</p><div class="agal">'+arr.map(function(id,i){return '<div style="background-image:url('+id+')"><button type="button" data-act="rmg" data-p="'+p+'" data-i="'+i+'" aria-label="Remove photo">×</button></div>'}).join('')+'</div>'
+      +'<div class="pf"><label class="a-btn" style="display:inline-flex;align-items:center;cursor:pointer">Add photos<input type="file" accept="image/*" multiple data-upm="'+p+'" hidden></label><button type="button" class="a-btn" data-act="where" data-p="'+p+'">Show me where</button></div></div>';
+  }
+
+  function video(label,p,hint){
+    var u=g(p), has=/\.(mp4|webm)$/i.test(u||'');
+    return '<div class="a-card slot"><b>'+esc(label)+'</b>'+(has?'<p class="slot-w"><span>Video uploaded.</span> It is playing from your photo storage.</p>':'')+'<div class="pf"><label class="a-btn" style="display:inline-flex;align-items:center;cursor:pointer">'+(has?'Replace video':'Choose video')+'<input type="file" accept="video/mp4,video/webm" data-upv="'+p+'" hidden></label>'+(has?'<button type="button" class="a-btn dng" data-act="clr" data-p="'+p+'">Remove</button>':'')+'</div>'+(hint?'<small style="color:var(--mute)">'+esc(hint)+'</small>':'')+'</div>';
+  }
+  /* ---------- tabs ---------- */
+  var V={
+    contact:function(){return '<h3>Contact and brand</h3><p class="a-note">These show in the footer, the WhatsApp button and the callback form.</p>'
+      +fld('Group name','brand')+fld('Tagline in the footer','tagline')
+      +fld('WhatsApp number','wa',{type:'tel',ph:'61412345678',hint:'Country code first, numbers only. For Australia 04xx becomes 614xx. Enquiries open a WhatsApp chat with this number.'})
+      +fld('Phone number shown on the site','phone',{type:'tel',ph:'+61 3 9xxx xxxx'})
+      +fld('Email','email',{type:'email'})+fld('Main address','address')+fld('Opening hours','hours',{ph:'Lunch and dinner, 7 days'})
+      +fld('Google Maps link','maps',{ph:'https://maps.google.com/...',hint:'Optional. Adds a Get directions link in the footer.'})
+      +fld('Top banner message (when no sale is running)','promo')},
+    venues:function(){
+      var v=g('venues.'+vi), b='venues.'+vi+'.';
+      return '<h3>Venues</h3><div class="pills" style="margin:0 0 18px">'+W.venues.map(function(x,i){return '<button type="button" class="pill" data-act="vsel" data-i="'+i+'" aria-pressed="'+(i===vi)+'">'+esc(x.short||x.name)+'</button>'}).join('')+'</div>'
+      +fld('Full name',b+'name')+fld('Short name (for buttons)',b+'short')+fld('Type',b+'kind',{hint:'For example Weddings and functions'})
+      +fld('One-paragraph summary',b+'blurb',{type:'area'})+fld('About this venue (shown on its page)',b+'about',{type:'area',ph:'Two short paragraphs about the setting, the feel and what is included.'})
+      +'<div class="arow">'+fld('City or suburb',b+'city')+fld('Street address',b+'address')+'</div>'
+      +'<h4>Key facts</h4><p class="a-note">Leave the value empty to hide a fact. Example: 600 / Guests.</p>'
+      +v.facts.map(function(f,i){return '<div class="arow">'+fld('Value',b+'facts.'+i+'.v',{ph:'600'})+fld('Label',b+'facts.'+i+'.l',{ph:'Guests'})+'</div>'}).join('')
+      +'<h4>Capacity by layout</h4><div class="arow">'+fld('Banquet (tables)',b+'cap.b',{type:'num'})+fld('Theatre (rows)',b+'cap.t',{type:'num'})+'</div><div class="arow">'+fld('Cocktail (standing)',b+'cap.c',{type:'num'})+'<div></div></div>'
+      +fld('These are my real capacities','flags.cap',{type:'check',hint:'Tick when correct. Removes the "sample figures" note.'})
+      +'<h4>Names in Punjabi and Hindi (optional)</h4><div class="arow">'+fld('Punjabi name',b+'pa',{ph:'ਸਰਤਾਜ ਹਵੇਲੀ'})+fld('Hindi name',b+'hi',{ph:'सरताज हवेली'})+'</div>'
+      +'<h4>Compare table and map</h4><p class="a-note">These feed the "Which palace fits your day?" table on the home page and the map on this venue page. Leave a box empty to hide that row. The map uses the street address above.</p>'
+      +'<div class="arow">'+fld('Best for',b+'best',{ph:'Large weddings'})+fld('Starting price',b+'price',{ph:'₹1,200 per plate'})+'</div>'
+      +'<div class="arow">'+fld('Parking',b+'parking',{ph:'80 cars'})+fld('Guest rooms',b+'rooms',{ph:'Yes, 12 rooms'})+'</div>'
+      +'<div class="arow">'+fld('Air conditioning',b+'ac',{ph:'Fully air conditioned'})+fld('Near (landmark)',b+'landmark',{ph:'5 minutes from the bus stand'})+'</div>'
+      +fld('Walk-through video link',b+'tour',{ph:'https://www.youtube.com/watch?v=...',hint:'Paste a YouTube link, or upload a short MP4 below. Shows a "Step inside" video on this page.'})
+      +video('Or upload a short video',b+'tour','Keep it under 40 MB and about a minute long so it loads fast on phones.')
+      +'<h4>Photos</h4>'+photo('Main photo',b+'photo','Wide photos work best. Large phone photos are resized for you.')+gallery('Gallery',b+'gallery')},
+    avail:function(){
+      var v=g('venues.'+vi), set={}; (v.booked||[]).forEach(function(d){set[d]=1});
+      var first=new Date(avY,avM,1).getDay(), days=new Date(avY,avM+1,0).getDate(), h='';
+      ['S','M','T','W','T','F','S'].forEach(function(x){h+='<div class="dow">'+x+'</div>'});
+      for(var i=0;i<first;i++)h+='<div></div>';
+      for(var d=1;d<=days;d++){var iso=avY+'-'+('0'+(avM+1)).slice(-2)+'-'+('0'+d).slice(-2); h+='<button type="button" class="day'+(set[iso]?' bk':'')+'" data-act="day" data-d="'+iso+'" aria-pressed="'+(!!set[iso])+'">'+d+'</button>'}
+      return '<h3>Availability</h3><p class="a-note">Tap a date to mark it booked (red). Tap again to open it. Customers see these dates on the calendar for that venue.</p>'
+      +'<div class="pills" style="margin:0 0 14px">'+W.venues.map(function(x,i){return '<button type="button" class="pill" data-act="vsel" data-i="'+i+'" aria-pressed="'+(i===vi)+'">'+esc(x.short||x.name)+'</button>'}).join('')+'</div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between"><button type="button" class="a-btn" data-act="mprev">←</button><b style="font-family:var(--display);font-size:22px">'+MONTHS[avM]+' '+avY+'</b><button type="button" class="a-btn" data-act="mnext">→</button></div>'
+      +'<div class="acal">'+h+'</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px"><button type="button" class="a-btn" data-act="mclear">Open the whole month</button></div>'
+      +fld('Use my real calendar on the site','flags.cal',{type:'check',hint:'Off: customers see sample dates. On: they see only the dates you marked booked.'})},
+    pricing:function(){
+      return '<h3>Prices</h3>'+fld('These are my real prices','flags.prices',{type:'check',hint:'Removes the "sample prices" notes on the site.'})
+      +W.plates.map(function(p,i){var b='plates.'+i+'.'; return '<div class="a-card"><h4 style="margin-top:0">Package '+(i+1)+'</h4><div class="arow">'+fld('Name',b+'name')+fld('Price per plate (₹)',b+'price',{type:'num'})+'</div>'+fld('What is included (one per line)',b+'items',{type:'lines'})+'</div>'}).join('')
+      +'<h4>Add-ons</h4>'+W.addons.map(function(a,i){var b='addons.'+i+'.'; return '<div class="a-card"><div class="arow">'+fld('Name',b+'name')+fld('Price (₹)',b+'fee',{type:'num'})+'</div>'+fld('Charged per plate (otherwise one fee)',b+'per',{type:'check'})+'<button type="button" class="a-btn dng" data-act="rm" data-p="addons" data-i="'+i+'">Remove add-on</button></div>'}).join('')
+      +'<button type="button" class="a-btn" data-act="add" data-p="addons">Add an add-on</button>'},
+    sale:function(){
+      return '<h3>Sales and offers</h3><p class="a-note">A running sale takes the percentage off every package price, shows the old price struck through, and replaces the top banner. It switches itself on and off by date.</p>'
+      +fld('Sale is on','sale.on',{type:'check'})+fld('Sale name','sale.name',{ph:'Winter wedding offer'})+fld('Discount (%)','sale.pct',{type:'num'})
+      +'<div class="arow">'+fld('Starts','sale.start',{type:'date'})+fld('Ends','sale.end',{type:'date'})+'</div>'
+      +fld('Banner wording (optional)','sale.text',{hint:'Leave empty to use: Sale name: 10% off our packages until date.'})},
+    menu:function(){
+      return '<h3>Restaurant menu</h3>'+fld('This is my real menu','flags.menu',{type:'check',hint:'Removes the "sample dishes" note.'})
+      +W.menu.map(function(m,i){var b='menu.'+i+'.'; return '<div class="a-card"><div class="arow">'+fld('Dish',b+'n')+fld('Price (optional)',b+'p',{ph:'₹320'})+'</div>'+fld('Type',b+'k',{type:'sel',opts:['Veg','Non-veg']})+'<button type="button" class="a-btn dng" data-act="rm" data-p="menu" data-i="'+i+'">Remove dish</button></div>'}).join('')
+      +'<button type="button" class="a-btn" data-act="add" data-p="menu">Add a dish</button>'},
+    photos:function(){
+      return '<h3>Site photos</h3><p class="a-note">Each photo below says where it shows. Tap <b>Show me where</b> to see your real site with a gold outline on the exact spot. Removing a photo brings the drawn placeholder back.</p>'
+      +photo('Home page big photo','media.hero','A wide photo of your best venue works best.')+photo('Restaurant photo','media.dish')+photo('Before photo: empty hall','media.baBefore')+photo('After photo: wedding setup','media.baAfter','Use the same angle as the before photo.')
+      +gallery('Home page gallery','gallery')},
+    extras:function(){
+      return '<h3>Extras</h3><p class="a-note">Each block shows on the site only once you fill it in. Nothing fake is ever shown.</p>'
+      +'<h4>Home page video</h4>'+fld('Video link','media.heroVideo',{ph:'https://.../hall.mp4',hint:'A short looping clip behind the home page headline (an MP4 link). With no video, the home page rotates your best photos instead. Phones that save data or have reduced motion switched on see a still photo.'})
+      +video('Or upload a video','media.heroVideo','Keep it under 10 MB and 10 to 15 seconds for a fast home page. No sound is played.')
+      +'<h4>Numbers strip on the home page</h4><p class="a-note">Only real numbers, please. Empty boxes are left out.</p>'
+      +'<div class="arow">'+fld('Events hosted','stats.events',{ph:'500+'})+fld('Hosting families since','stats.since',{ph:'2012'})+'</div>'+fld('Guest rating','stats.rating',{ph:'4.8',hint:'For example your Google rating. Shows a star next to it.'})
+      +'<h4>Instagram</h4><div class="arow">'+fld('Instagram handle','ig.handle',{ph:'@sartajroyalgroup'})+fld('Profile link (optional)','ig.link',{ph:'https://instagram.com/...'})+'</div><p class="a-note">Adds a "Follow along" block with your photos linking to your profile.</p>'
+      +'<h4>Our story</h4><p class="a-note">Writing this adds an "Our story" page and a link to it in the menu.</p>'
+      +fld('Heading','story.title')+fld('Your story','story.text',{type:'area',hint:'Leave a blank line between paragraphs.'})
+      +'<div class="arow">'+fld('Your name','story.name')+fld('Role','story.role',{ph:'Owner, Sartaj Royal Group'})+'</div>'+photo('Story photo','story.photo','A portrait of you and the family works well.')
+      +'<h4>Questions and answers</h4><p class="a-note">Shows on the Contact and Packages pages. A question only appears once it has an answer.</p>'
+      +W.faq.map(function(f,i){var b='faq.'+i+'.'; return '<div class="a-card">'+fld('Question',b+'q')+fld('Answer',b+'a',{type:'area'})+'<button type="button" class="a-btn dng" data-act="rm" data-p="faq" data-i="'+i+'">Remove</button></div>'}).join('')
+      +'<button type="button" class="a-btn" data-act="add" data-p="faq">Add a question</button>'},
+    reviews:function(){
+      return '<h3>Guest reviews</h3><p class="a-note">Only add reviews from real guests, with their permission. Nothing shows until you add one.</p>'
+      +W.reviews.map(function(r,i){var b='reviews.'+i+'.'; return '<div class="a-card">'+fld('What they said',b+'text',{type:'area'})+'<div class="arow">'+fld('Name',b+'name')+fld('Event (optional)',b+'detail',{ph:'Wedding at Kings Villa'})+'</div><button type="button" class="a-btn dng" data-act="rm" data-p="reviews" data-i="'+i+'">Remove</button></div>'}).join('')
+      +'<button type="button" class="a-btn" data-act="add" data-p="reviews">Add a review</button>'},
+    inbox:function(){
+      if(!CB.length)return '<h3>Callback requests</h3><p class="a-note">Nothing yet. New requests appear here when someone submits the form. <button type="button" class="a-btn" data-act="cbrefresh">Refresh</button></p>';
+      return '<h3>Callback requests</h3><p class="a-note">Newest first. Check here each day. <button type="button" class="a-btn" data-act="cbrefresh">Refresh</button></p>'+CB.map(function(r){
+        return '<div class="a-card" style="'+(r.done?'opacity:.55':'')+'"><b>'+esc(r.name)+'</b><div style="margin:4px 0 8px"><a href="tel:+'+S.digits(r.phone)+'" style="color:var(--champ)">'+esc(r.phone)+'</a> · '+esc(r.time||'')+' · '+esc(r.venue||'')+(r.email?' · '+esc(r.email):'')+'</div><small style="color:var(--mute)">'+esc(new Date(r.created_at).toLocaleString())+'</small><div style="display:flex;gap:10px;margin-top:12px"><button type="button" class="a-btn" data-act="cbdone" data-i="'+esc(r.id)+'">'+(r.done?'Mark as new':'Mark as called')+'</button><button type="button" class="a-btn dng" data-act="cbdel" data-i="'+esc(r.id)+'">Delete</button></div></div>'}).join('')}
+  };
+
+  function render(){
+    $('#aTabs').innerHTML=TABS.map(function(t){return '<button type="button" data-act="tab" data-t="'+t[0]+'" aria-pressed="'+(t[0]===tab)+'">'+t[1]+(t[0]==='inbox'&&CB.filter(function(r){return !r.done}).length?' ('+CB.filter(function(r){return !r.done}).length+')':'')+'</button>'}).join('');
+    var sc=$('.a-body').scrollTop; main.innerHTML=V[tab](); $('.a-body').scrollTop=sc;
+  }
+
+  /* ---------- edits ---------- */
+  main.addEventListener('input',onField); main.addEventListener('change',onField);
+  function onField(e){
+    var t=e.target, p=t.getAttribute&&t.getAttribute('data-p'); if(!p||t.type==='file')return;
+    var v; if(t.type==='checkbox')v=t.checked; else if(t.getAttribute('data-t')==='n')v=t.value===''?0:+t.value; else if(t.getAttribute('data-t')==='lines')v=t.value.split('\n'); else v=t.value;
+    s(p,v); mark();
+  }
+  async function upload(file){
+    var blob=await shrink(file,1800), ext=/png/.test(blob.type)?'png':'jpg';
+    var name='site/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    var r=await api('/storage/v1/object/photos/'+name,{method:'POST',headers:{'Content-Type':blob.type||'image/jpeg'},body:blob});
+    if(!r.ok)throw new Error('Upload failed. Check that setup step 3 (photo storage) was run.');
+    return SB.url+'/storage/v1/object/public/photos/'+name;
+  }
+  async function uploadVideo(file){
+    if(file.size>45*1024*1024)throw new Error('That video is over 45 MB. Please use a shorter or smaller clip.');
+    var ext=/webm/i.test(file.type||file.name)?'webm':'mp4', name='site/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    var r=await api('/storage/v1/object/photos/'+name,{method:'POST',headers:{'Content-Type':file.type||'video/mp4'},body:file});
+    if(!r.ok)throw new Error('Video upload failed. Try a smaller clip.');
+    return SB.url+'/storage/v1/object/public/photos/'+name;
+  }
+  function shrink(file,max){return new Promise(function(res){
+    var img=new Image(), u=URL.createObjectURL(file);
+    img.onload=function(){var k=Math.min(1,max/Math.max(img.width,img.height)), c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height); c.toBlob(function(b){URL.revokeObjectURL(u);res(b||file)},'image/jpeg',.85)};
+    img.onerror=function(){URL.revokeObjectURL(u);res(file)}; img.src=u;
+  })}
+  async function onFile(e){
+    var t=e.target; if(t.type!=='file'||!t.files.length)return;
+    var p=t.getAttribute('data-up'), pm=t.getAttribute('data-upm'), pv=t.getAttribute('data-upv'), files=Array.prototype.slice.call(t.files);
+    say('Uploading…');
+    try{
+      if(pv){s(pv,await uploadVideo(files[0]))}
+      else if(p){s(p,await upload(files[0]))}
+      else if(pm){var arr=(g(pm)||[]).slice(); for(var i=0;i<files.length;i++){arr.push(await upload(files[i]))} s(pm,arr)}
+      mark(); render(); if(PV.p){drawTools(); sendPrev()}
+    }catch(err){say((err&&err.message)||'Upload failed. Try a smaller photo.',true)}
+  }
+  main.addEventListener('change',onFile); $('#prevTools').addEventListener('change',onFile);
+
+  /* ---------- "show me where" preview ---------- */
+  var PV={p:null,i:0}, frame=$('#prevFrame');
+  function curLoc(){return slotMeta(PV.p).locs[PV.i]}
+  function drawTools(){
+    var m=slotMeta(PV.p), isG=/gallery$/.test(PV.p), id=isG?null:g(PV.p), has=validId(id);
+    $('#prevWhere').textContent='Shows on: '+m.where;
+    $('#prevChips').innerHTML=m.locs.length>1?m.locs.map(function(l,i){return '<button type="button" class="pill" data-act="ploc" data-i="'+i+'" aria-pressed="'+(i===PV.i)+'">'+esc(l.l)+'</button>'}).join(''):'';
+    $('#prevTools').innerHTML=(isG?'<label class="a-btn pri" style="display:inline-flex;align-items:center;cursor:pointer">Add photos<input type="file" accept="image/*" multiple data-upm="'+PV.p+'" hidden></label>':'<div class="pv" style="width:64px;height:48px'+(has?';background-image:url('+id+')':'')+'"></div><label class="a-btn pri" style="display:inline-flex;align-items:center;cursor:pointer">'+(has?'Replace photo':'Choose photo')+'<input type="file" accept="image/*" data-up="'+PV.p+'" hidden></label>');
+  }
+  function openPrev(p){PV.p=p;PV.i=0;$('#prev').hidden=false;drawTools();loadLoc()}
+  function loadLoc(){var l=curLoc(); $('#prevTitle').textContent=l?l.l:'Preview'; if(l)frame.src='../'+l.page+'?preview=1'}
+  function sendPrev(){
+    var l=curLoc(); if(!l||!frame.contentWindow)return;
+    frame.contentWindow.postMessage({srg:'cfg',cfg:S.clone(W)},location.origin);
+    frame.contentWindow.postMessage({srg:'focus',sel:l.sel,force:l.force||''},location.origin);
+  }
+  window.addEventListener('message',function(e){if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data&&e.data.srg==='ready')sendPrev()});
+
+  panel.addEventListener('click',async function(e){
+    var b=e.target.closest('[data-act]'); if(!b)return; var a=b.getAttribute('data-act'), p=b.getAttribute('data-p'), i=+b.getAttribute('data-i');
+    if(a==='tab'){tab=b.getAttribute('data-t');render();return}
+    if(a==='where'){openPrev(p);return}
+    if(a==='pclose'){$('#prev').hidden=true;PV.p=null;frame.src='about:blank';return}
+    if(a==='ploc'){PV.i=i;drawTools();loadLoc();return}
+    if(a==='vsel'){vi=i;render();return}
+    if(a==='clr'){s(p,'');mark();render();return}
+    if(a==='rmg'){var arr=g(p).slice();arr.splice(i,1);s(p,arr);mark();render();return}
+    if(a==='rm'){var l=g(p).slice();l.splice(i,1);s(p,l);mark();render();return}
+    if(a==='add'){var l2=g(p).slice(); l2.push(p==='addons'?{name:'',fee:0,per:false}:p==='menu'?{n:'',k:'Veg',p:''}:p==='faq'?{q:'',a:''}:{text:'',name:'',detail:''}); s(p,l2);mark();render();return}
+    if(a==='mprev'){avM--;if(avM<0){avM=11;avY--}render();return}
+    if(a==='mnext'){avM++;if(avM>11){avM=0;avY++}render();return}
+    if(a==='day'){var d=b.getAttribute('data-d'), bk=(g('venues.'+vi+'.booked')||[]).slice(), k=bk.indexOf(d); if(k>-1)bk.splice(k,1); else bk.push(d); s('venues.'+vi+'.booked',bk);mark();render();return}
+    if(a==='mclear'){var pre=avY+'-'+('0'+(avM+1)).slice(-2)+'-'; s('venues.'+vi+'.booked',(g('venues.'+vi+'.booked')||[]).filter(function(x){return x.indexOf(pre)!==0}));mark();render();return}
+    if(a==='cbdone'||a==='cbdel'){await cbChange(b.getAttribute('data-i'),a);return}
+    if(a==='cbrefresh'){await loadCb();return}
+  });
+
+  /* ---------- save and publish ---------- */
+  function clean(){
+    W.plates.forEach(function(p){p.items=(p.items||[]).map(function(x){return String(x).trim()}).filter(Boolean)});
+    W.addons=W.addons.filter(function(a){return String(a.name).trim()});
+    W.menu=W.menu.filter(function(m){return String(m.n).trim()});
+    W.reviews=W.reviews.filter(function(r){return String(r.text).trim()});
+    W.wa=S.digits(W.wa);
+    W.venues.forEach(function(v){v.booked=(v.booked||[]).slice().sort()});
+  }
+  async function save(){
+    clean(); say('Saving…');
+    var r=await api('/rest/v1/site_config?on_conflict=id',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:1,data:W,updated_at:new Date().toISOString()})});
+    if(!r.ok)throw new Error(r.status===401||r.status===403?'Not allowed. Check the owner email in setup step 2.':'Save failed ('+r.status+')');
+    dirty=false; say('Saved. Your site is updated.');
+  }
+  $('#aSave').addEventListener('click',async function(){try{await save();render()}catch(err){say('Could not save: '+((err&&err.message)||'try again'),true)}});
+  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+
+  /* ---------- callbacks inbox ---------- */
+  async function loadCb(){
+    try{
+      var r=await api('/rest/v1/callbacks?select=*&order=created_at.desc&limit=200'); if(!r.ok)throw 0;
+      CB=await r.json(); var n=CB.filter(function(x){return !x.done}).length; fab.textContent=n?n+' new callback'+(n>1?'s':''):'No new callbacks'; fab.hidden=false;
+      if(!panel.hidden)render();
+    }catch(x){ if(!panel.hidden&&tab==='inbox')say('Could not load callbacks.',true) }
+  }
+  async function cbChange(id,act){
+    try{
+      var row=CB.filter(function(x){return String(x.id)===String(id)})[0]; if(!row)return;
+      var r=act==='cbdel'?await api('/rest/v1/callbacks?id=eq.'+encodeURIComponent(id),{method:'DELETE'}):await api('/rest/v1/callbacks?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({done:!row.done})});
+      if(!r.ok)throw 0; await loadCb();
+    }catch(err){say('Could not update that request.',true)}
+  }
+
+  /* ---------- Supabase (plain fetch, no libraries) ---------- */
+  var SB=window.SRG_SB||{}, SBOK=!!(SB.url&&SB.anonKey&&/^https:\/\//.test(SB.url)), KEY='srg_admin_session';
+  if(SBOK)SB.url=SB.url.replace(/\/+$/,'');
+  function getSess(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(x){return null}}
+  function putSess(o){try{if(o)localStorage.setItem(KEY,JSON.stringify(o));else localStorage.removeItem(KEY)}catch(x){}}
+  function keep(j){putSess({access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600)})}
+  async function token(){
+    var se=getSess(); if(!se)throw new Error('signed out');
+    if(se.expires_at*1000-Date.now()<60000){
+      var r=await fetch(SB.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:SB.anonKey,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:se.refresh_token})});
+      if(!r.ok){putSess(null);throw new Error('signed out')}
+      var j=await r.json(); keep(j); se=getSess();
+    }
+    return se.access_token;
+  }
+  async function api(path,o){
+    o=o||{}; var h={apikey:SB.anonKey,Authorization:'Bearer '+await token()}; for(var k in (o.headers||{}))h[k]=o.headers[k];
+    return fetch(SB.url+path,{method:o.method||'GET',headers:h,body:o.body,cache:'no-store'});
+  }
+  function showGate(msg,bad){ panel.hidden=true; $('#gate').hidden=false; var m=$('#gateMsg'); m.textContent=msg; m.style.color=bad?'#F2A3A3':'' }
+  async function loadAll(){
+    S.draft=null;
+    try{var r=await api('/rest/v1/site_config?id=eq.1&select=data'); if(r.ok){var rows=await r.json(); if(rows[0]&&rows[0].data)S.draft=rows[0].data}else if(r.status===401){throw new Error('signed out')}}catch(x){ if(x&&x.message==='signed out'){showGate('Please sign in again.',true);return false} }
+    W=S.clone(S.build(S.draft||{})); dirty=false; say(''); $('#gate').hidden=true; panel.hidden=false; render(); await loadCb(); return true;
+  }
+  $('#loginForm').addEventListener('submit',async function(e){
+    e.preventDefault(); var go=$('#lgGo'); go.disabled=true; $('#gateMsg').style.color=''; $('#gateMsg').textContent='Signing in…';
+    try{
+      var r=await fetch(SB.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SB.anonKey,'Content-Type':'application/json'},body:JSON.stringify({email:$('#lgEmail').value.trim(),password:$('#lgPass').value})});
+      var j=await r.json().catch(function(){return {}});
+      if(!r.ok)throw new Error(r.status===400||r.status===401?'Wrong email or password.':'Could not sign in. Try again.');
+      keep(j); $('#lgPass').value=''; await loadAll();
+    }catch(err){ showGate((err&&err.message)||'Could not sign in.',true) }
+    go.disabled=false;
+  });
+  $('#aOut').addEventListener('click',async function(){
+    if(dirty&&!armed){armed=true;say('You have unsaved changes. Tap Sign out again to leave without saving.',true);return}
+    try{await api('/auth/v1/logout',{method:'POST'})}catch(x){}
+    putSess(null); armed=false; dirty=false; CB=[]; showGate('Signed out.');
+  });
+  setInterval(function(){ if(!panel.hidden&&getSess())loadCb() },60000);
+  (async function boot(){
+    if(!SBOK){ showGate('The database is not connected yet. Open supabase-config.js and paste your two Supabase values, then reload.',true); $('#loginForm').hidden=true; return }
+    if(getSess()){ try{ if(await loadAll())return }catch(x){} }
+    showGate('Sartaj Royal Group. Owner only.');
+  })();
+})();
+

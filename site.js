@@ -278,6 +278,7 @@
     +'<div class="modal" id="cbModal" role="dialog" aria-modal="true" aria-labelledby="cbTitle" hidden><div class="mbox"><h3 id="cbTitle">Request a callback</h3><p>Leave your number and we will call you at a time that suits you.</p>'
     +'<form id="cbForm" novalidate><div class="f"><label for="cbName">Your name</label><input id="cbName" type="text" autocomplete="name" placeholder="Name" maxlength="80"></div>'
     +'<div class="f"><label for="cbPhone">Phone</label><input id="cbPhone" type="tel" autocomplete="tel" placeholder="Phone" maxlength="30"></div>'
+    +'<div class="f" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="cbWeb">Website</label><input id="cbWeb" type="text" name="website" tabindex="-1" autocomplete="off"></div>'
     +'<div class="f"><label for="cbEmail">Email (optional)</label><input id="cbEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120"></div>'
     +'<div class="f"><label for="cbTime">Best time to call</label><select id="cbTime"><option>Any time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>'
     +'<div class="f"><label for="cbVenue">Venue</label><select id="cbVenue"><option>Any venue</option></select></div>'
@@ -327,6 +328,7 @@
   async function submitCb(e){
     e.preventDefault();
     var nm=$('#cbName').value.trim().slice(0,80), ph=$('#cbPhone').value.trim().slice(0,30), t=T3[LANG];
+    if($('#cbWeb')&&$('#cbWeb').value){cbSay(t.ok);return}
     if(!nm||digits(ph).length<7){cbSay(t.bad,true);return}
     var go=$('#cbGo'); go.disabled=true;
     var em=($('#cbEmail').value||'').trim().slice(0,120); if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))em='';
@@ -402,7 +404,7 @@
     $('#igGrid').hidden=!ph.length;
   }
   /* photo tile (opens the viewer) */
-  function tile(id){return '<div role="button" tabindex="0" data-src="'+esc(id)+'" aria-label="Open photo" style="background-image:url('+pUrl(id)+')"></div>'}
+  function tile(id){if(!validId(id))return ''; return '<div role="button" tabindex="0" data-src="'+esc(id)+'" aria-label="Open photo" style="background-image:url('+pUrl(id)+')"></div>'}
   var rotI=0;
   function startRot(){
     var rw=$$('#rot span'); if(!rw.length||reduce)return;
