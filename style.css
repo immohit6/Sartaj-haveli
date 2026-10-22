@@ -322,6 +322,7 @@ footer{border-top:1px solid var(--line);padding-block:60px 120px;color:var(--mut
 .hmedia{position:absolute;inset:0;z-index:2;overflow:hidden}
 .hmedia::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,18,15,.55) 0%,rgba(6,18,15,.28) 42%,rgba(6,18,15,.82) 100%)}
 .hvid,.hs{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hvid{opacity:0;transition:opacity .6s ease}.hvid.go{opacity:1}
 .hs{background-size:cover;background-position:center;opacity:0;transform:scale(1.04);transition:opacity 1.6s ease,transform 9s ease}
 .hs.on{opacity:1;transform:scale(1.12)}
 .hdots{position:absolute;z-index:3;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:8px}
